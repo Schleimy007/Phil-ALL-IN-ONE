@@ -2,8 +2,8 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phil: All In One OS - 100 Tools Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phil: All In One OS - 100 Tools Mobile Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,12 +20,12 @@
             --success: #10b981;
             --radius: 12px;
             --font: 'Inter', sans-serif;
-            --transition: all 0.2s ease;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; line-height: 1.6; }
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
@@ -77,22 +77,32 @@
         .loader-logo { font-size: 3rem; font-weight: 800; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* Nav */
-        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 20px 0; transition: var(--transition); }
-        nav.scrolled { padding: 15px 0; background: rgba(10,10,10,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+        /* Nav & Mobile Menu Overlay */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 2000; padding: 20px 0; transition: var(--transition); }
+        nav.scrolled { padding: 15px 0; background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
         .nav-inner { display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: baseline; }
+        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: baseline; z-index: 2002; position: relative; }
         .logo span { color: var(--primary); font-size: 2rem; line-height: 0; }
-        .nav-links { display: flex; gap: 32px; }
+        
+        .nav-links { display: flex; gap: 32px; align-items: center; }
         .nav-links a { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); position: relative; }
         .nav-links a:hover, .nav-links a.active { color: var(--text); }
         .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
-        .mobile-menu-btn { display: none; background: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+        
+        /* Animated Burger Menu */
+        .mobile-menu-btn { display: none; background: transparent; border: none; cursor: pointer; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; z-index: 2002; position: relative; }
+        .mobile-menu-btn span { display: block; width: 100%; height: 3px; background: var(--text); border-radius: 3px; transition: var(--transition); transform-origin: left center; }
+        .mobile-menu-btn.open span:nth-child(1) { transform: rotate(45deg); width: 105%; }
+        .mobile-menu-btn.open span:nth-child(2) { opacity: 0; width: 0; }
+        .mobile-menu-btn.open span:nth-child(3) { transform: rotate(-45deg); width: 105%; }
+        
+        .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .menu-overlay.show { opacity: 1; pointer-events: auto; }
 
         /* Hero */
         #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; padding-top: 60px; }
         #particles { position: absolute; inset: 0; z-index: 0; }
-        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; padding: 0 15px; }
         .hero-content h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); margin-bottom: 24px; }
         .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; }
         .cursor { display: inline-block; width: 3px; background: var(--primary); animation: blink 1s step-end infinite; }
@@ -103,8 +113,8 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* Cards */
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: var(--transition); position: relative; overflow: hidden; }
-        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px -10px rgba(124,58,237,0.3); border-color: rgba(124,58,237,0.5); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease; position: relative; overflow: hidden; }
+        @media (hover: hover) { .feature-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px -10px rgba(124,58,237,0.3); border-color: rgba(124,58,237,0.5); } }
         .feature-icon { width: 48px; height: 48px; background: rgba(124,58,237,0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
         .feature-card h3 { margin-bottom: 12px; font-size: 1.25rem; }
         .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
@@ -127,11 +137,9 @@
         .calc-history { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; min-height: 16px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .calc-btn { background: var(--surface-hover); border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: var(--transition); color: var(--text); }
-        .calc-btn:hover { background: var(--border); }
+        .calc-btn:active { background: var(--border); transform: scale(0.95); }
         .calc-btn.op { background: rgba(124,58,237,0.1); color: var(--primary); }
-        .calc-btn.op:hover { background: rgba(124,58,237,0.2); }
         .calc-btn.eq { background: var(--primary); color: #fff; grid-column: span 2; }
-        .calc-btn.eq:hover { background: var(--primary-hover); }
 
         /* Pomodoro */
         .pomo-circle { width: 200px; height: 200px; position: relative; margin: 0 auto 24px; }
@@ -149,8 +157,9 @@
         .w-stat { background: var(--bg); padding: 12px; border-radius: 8px; text-align: center; }
         .w-stat-val { font-weight: 800; font-size: 1.1rem; }
         .w-stat-lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-        .forecast-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-top: 20px; }
-        .forecast-card { background: var(--bg); padding: 12px; border-radius: 8px; min-width: 70px; text-align: center; flex-shrink: 0; }
+        .forecast-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-top: 20px; scrollbar-width: none; -ms-overflow-style: none; scroll-snap-type: x mandatory; }
+        .forecast-container::-webkit-scrollbar { display: none; }
+        .forecast-card { background: var(--bg); padding: 12px; border-radius: 8px; min-width: 70px; text-align: center; flex-shrink: 0; scroll-snap-align: start; }
 
         /* Password */
         .pass-display { background: var(--bg); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 1.25rem; text-align: center; letter-spacing: 2px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; word-break: break-all; min-height: 60px; display: flex; align-items: center; justify-content: center;}
@@ -166,14 +175,13 @@
 
         /* Kanban Specifics */
         .kanban-task { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; cursor: grab; transition: var(--transition); }
-        .kanban-task:active { cursor: grabbing; transform: scale(0.98); }
-        .kanban-task:hover { border-color: var(--primary); }
+        .kanban-task:active { cursor: grabbing; transform: scale(0.98); border-color: var(--primary); }
         .kanban-dropzone { min-height: 200px; padding-bottom: 20px; }
 
         /* Calculators Tabs */
-        .tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 30px; overflow-x: auto; }
+        .tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 30px; overflow-x: auto; scrollbar-width: none; }
+        .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { padding: 12px 24px; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; }
-        .tab-btn:hover { color: var(--text); }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
@@ -199,7 +207,7 @@
         .footer-links a { color: var(--text-muted); }
         .footer-links a:hover { color: var(--primary); }
         
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; backdrop-filter: blur(5px); }
         .modal.active { opacity: 1; pointer-events: auto; }
         .modal-content { background: var(--surface); width: 100%; max-width: 600px; max-height: 80vh; border-radius: var(--radius); padding: 30px; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s; border: 1px solid var(--border); }
         .modal.active .modal-content { transform: translateY(0); }
@@ -215,19 +223,60 @@
         .demo-bar { position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: rgba(124,58,237,0.1); animation: scan 2s linear infinite; }
         @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
 
-        /* Media Queries */
+        /* ==========================================
+           MOBILE DESIGN PERFECTION (Media Queries)
+           ========================================== */
         @media(max-width: 992px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
         @media(max-width: 768px) {
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); flex-direction: column; padding: 20px; gap: 20px; border-bottom: 1px solid var(--border); }
-            .nav-links.show { display: flex; }
-            .mobile-menu-btn { display: block; }
-            .hero-content h1 { font-size: 2.5rem; }
-            .calc-grid { grid-template-columns: repeat(4, 1fr); }
-            .footer-grid { grid-template-columns: 1fr; text-align: center; }
-            .footer-grid .logo { justify-content: center; }
+            /* Premium Side-Drawer Mobile Menu */
+            .nav-links { 
+                position: fixed; top: 0; right: -100%; height: 100vh; width: 80%; max-width: 320px;
+                background: rgba(23, 23, 23, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                flex-direction: column; justify-content: center; align-items: flex-start;
+                padding: 40px; gap: 30px; border-left: 1px solid var(--border);
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                z-index: 2001; display: flex; margin: 0; 
+            }
+            .nav-links.show { right: 0; }
+            .nav-links a { font-size: 1.5rem; width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+            .nav-links a.active::after { display: none; }
+            .nav-links a.active { color: var(--primary); }
+            .mobile-menu-btn { display: flex; }
             .nav-btn { display: none; }
+            
+            /* Typography & Spacing adjustments */
+            .hero-content h1 { font-size: 2.8rem; }
+            .hero-content p { font-size: 1.1rem; }
+            .section { padding: 60px 0; }
+            .container { padding: 0 15px; }
+            
+            /* One Column Grid */
+            .tools-grid { grid-template-columns: 1fr; }
+            
+            /* Calc Adjustments */
+            .calc-btn { padding: 12px; font-size: 1.2rem; }
+            .calc-display { padding: 15px; font-size: 1.2rem; }
+            
+            /* Responsive Calculator Tabs */
+            #tab-zins .grid { grid-template-columns: 1fr; }
+
+            /* Footer adjustments */
+            .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 30px; }
+            .footer-grid .logo { justify-content: center; }
+
+            /* Swipeable Kanban for Mobile */
+            .kanban-wrapper { 
+                flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
+                scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;
+                padding-bottom: 20px; gap: 15px;
+            }
+            .kanban-wrapper::-webkit-scrollbar { display: none; }
+            .kanban-col { min-width: 85%; scroll-snap-align: center; }
+            
+            /* Modals */
+            .modal-content { padding: 20px; width: 95%; }
         }
     </style>
 </head>
@@ -246,10 +295,14 @@
             </div>
             <div class="flex gap-4">
                 <a href="#tools" class="btn btn-primary nav-btn">Jetzt starten</a>
-                <button class="mobile-menu-btn" id="mobileBtn">☰</button>
+                <button class="mobile-menu-btn" id="mobileBtn">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
         </div>
     </nav>
+    
+    <div class="menu-overlay" id="menuOverlay"></div>
 
     <header id="hero">
         <canvas id="particles"></canvas>
@@ -723,7 +776,7 @@
                         </h3>
                         <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="addKanbanTask()">+ Neue Aufgabe</button>
                     </div>
-                    <div class="kanban-wrapper" style="display: flex; gap: 20px; overflow-x: auto; min-height: 300px; padding-bottom: 10px;">
+                    <div class="kanban-wrapper" style="display: flex; gap: 20px; min-height: 300px; padding-bottom: 10px;">
                         <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')" style="flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px;">
                             <h4 style="margin-bottom: 15px; color: var(--text-muted); display: flex; justify-content: space-between;">To Do <span id="count-todo">0</span></h4>
                             <div id="kb-todo" class="kanban-dropzone" style="min-height: 200px;"></div>
@@ -903,7 +956,7 @@
             <p style="color: var(--text-muted); font-size: 0.9rem;">Schnell. Lokal. Sicher.</p>
             <div class="demo-screen">
                 <div class="demo-bar"></div>
-                Initializing 100 Tools...<br>Status: OVERKILL OK
+                Initializing 100 Tools...<br>Status: MOBILE READY
             </div>
             <button class="btn btn-primary" onclick="closeModal('demo-modal'); window.location.href='#tools'">Selbst ausprobieren</button>
         </div>
@@ -926,13 +979,25 @@
             loadKanban();
         });
 
-        // --- Nav / UI ---
+        // --- Nav / UI / Mobile Menu ---
         const nav = document.getElementById('nav');
         const btt = document.getElementById('btt');
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('.nav-link');
         const mobileBtn = document.getElementById('mobileBtn');
         const navLinksContainer = document.getElementById('navLinks');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        function toggleMobileMenu() {
+            navLinksContainer.classList.toggle('show');
+            mobileBtn.classList.toggle('open');
+            menuOverlay.classList.toggle('show');
+            // Prevent background scrolling when menu is open
+            document.body.style.overflow = navLinksContainer.classList.contains('show') ? 'hidden' : '';
+        }
+
+        mobileBtn.addEventListener('click', toggleMobileMenu);
+        menuOverlay.addEventListener('click', toggleMobileMenu);
 
         window.addEventListener('scroll', () => {
             const y = window.scrollY;
@@ -950,8 +1015,12 @@
             });
         });
 
-        mobileBtn.addEventListener('click', () => navLinksContainer.classList.toggle('show'));
-        navLinks.forEach(l => l.addEventListener('click', () => navLinksContainer.classList.remove('show')));
+        // Close mobile menu when clicking a link
+        navLinks.forEach(l => l.addEventListener('click', () => {
+            if(navLinksContainer.classList.contains('show')) {
+                toggleMobileMenu();
+            }
+        }));
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
