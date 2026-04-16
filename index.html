@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Phil: All In One OS - 100 Tools Mobile Edition</title>
+    <title>Phil: All In One OS - Perfect Mobile Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -45,7 +45,6 @@
         .gap-4 { gap: 16px; }
         .gap-8 { gap: 32px; }
         
-        /* New Micro-Utils */
         .w-100 { width: 100%; }
         .mt-2 { margin-top: 10px; }
         .mb-2 { margin-bottom: 10px; }
@@ -62,14 +61,14 @@
         .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: var(--transition); text-align: center; }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 0 15px rgba(124,58,237,0.4); }
+        @media(hover: hover) { .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 0 15px rgba(124,58,237,0.4); } }
         .btn-secondary { background: var(--surface-hover); color: var(--text); }
-        .btn-secondary:hover { background: var(--border); }
+        @media(hover: hover) { .btn-secondary:hover { background: var(--border); } }
         .btn-outline { border: 1px solid var(--border); background: transparent; color: var(--text); }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        @media(hover: hover) { .btn-outline:hover { border-color: var(--primary); color: var(--primary); } }
 
         /* Inputs */
-        .input { width: 100%; padding: 12px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text); transition: var(--transition); }
+        .input { width: 100%; padding: 12px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text); transition: border-color 0.2s; }
         .input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
 
         /* Loader */
@@ -77,9 +76,9 @@
         .loader-logo { font-size: 3rem; font-weight: 800; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* Nav & Mobile Menu Overlay */
-        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 2000; padding: 20px 0; transition: var(--transition); }
-        nav.scrolled { padding: 15px 0; background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+        /* Nav & Overlay */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 2000; padding: 20px 0; transition: background 0.3s, padding 0.3s, border-bottom 0.3s; will-change: background, padding; }
+        nav.scrolled { padding: 15px 0; background: rgba(10,10,10,0.9); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .nav-inner { display: flex; align-items: center; justify-content: space-between; }
         .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: baseline; z-index: 2002; position: relative; }
         .logo span { color: var(--primary); font-size: 2rem; line-height: 0; }
@@ -89,67 +88,60 @@
         .nav-links a:hover, .nav-links a.active { color: var(--text); }
         .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
         
-        /* Animated Burger Menu */
         .mobile-menu-btn { display: none; background: transparent; border: none; cursor: pointer; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; z-index: 2002; position: relative; }
-        .mobile-menu-btn span { display: block; width: 100%; height: 3px; background: var(--text); border-radius: 3px; transition: var(--transition); transform-origin: left center; }
+        .mobile-menu-btn span { display: block; width: 100%; height: 3px; background: var(--text); border-radius: 3px; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s; transform-origin: left center; will-change: transform, opacity; }
         .mobile-menu-btn.open span:nth-child(1) { transform: rotate(45deg); width: 105%; }
-        .mobile-menu-btn.open span:nth-child(2) { opacity: 0; width: 0; }
+        .mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
         .mobile-menu-btn.open span:nth-child(3) { transform: rotate(-45deg); width: 105%; }
         
-        .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; will-change: opacity; }
         .menu-overlay.show { opacity: 1; pointer-events: auto; }
 
         /* Hero */
         #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; padding-top: 60px; }
-        #particles { position: absolute; inset: 0; z-index: 0; }
+        #particles { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
         .hero-content { position: relative; z-index: 1; max-width: 800px; padding: 0 15px; }
-        .hero-content h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); margin-bottom: 24px; }
-        .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; }
+        .hero-content h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); margin-bottom: 24px; }
+        .hero-content p { font-size: clamp(1rem, 3vw, 1.25rem); color: var(--text-muted); margin-bottom: 40px; }
         .cursor { display: inline-block; width: 3px; background: var(--primary); animation: blink 1s step-end infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         /* Animations */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; will-change: opacity, transform; }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* Cards */
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease; position: relative; overflow: hidden; }
-        @media (hover: hover) { .feature-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px -10px rgba(124,58,237,0.3); border-color: rgba(124,58,237,0.5); } }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: transform 0.2s ease; position: relative; overflow: hidden; will-change: transform; }
+        @media (hover: hover) { .feature-card:hover { transform: translateY(-4px); border-color: rgba(124,58,237,0.5); } }
         .feature-icon { width: 48px; height: 48px; background: rgba(124,58,237,0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
         .feature-card h3 { margin-bottom: 12px; font-size: 1.25rem; }
         .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
 
-        /* Tools grid layout */
         .tools-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 
-        /* Tool Specifics */
         .tool-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
         .tool-header h3 { display: flex; align-items: center; gap: 10px; font-size: 1rem; }
         .tool-header svg { width: 20px; height: 20px; color: var(--primary); flex-shrink: 0; }
         
-        /* Notes */
         #note-input, #note-preview { width: 100%; height: 250px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text); resize: none; overflow-y: auto; }
         #note-preview { display: none; }
         #note-preview h1, #note-preview h2, #note-preview h3 { margin-bottom: 10px; color: var(--primary); }
         
-        /* Calc */
         .calc-display { background: var(--bg); padding: 20px; border-radius: 8px; text-align: right; margin-bottom: 15px; font-size: 1.5rem; word-break: break-all; min-height: 70px; display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--border); }
         .calc-history { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; min-height: 16px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .calc-btn { background: var(--surface-hover); border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: var(--transition); color: var(--text); }
+        .calc-btn { background: var(--surface-hover); border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; color: var(--text); transition: background 0.1s; }
         .calc-btn:active { background: var(--border); transform: scale(0.95); }
         .calc-btn.op { background: rgba(124,58,237,0.1); color: var(--primary); }
         .calc-btn.eq { background: var(--primary); color: #fff; grid-column: span 2; }
 
-        /* Pomodoro */
         .pomo-circle { width: 200px; height: 200px; position: relative; margin: 0 auto 24px; }
         .pomo-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
         .pomo-bg { fill: none; stroke: var(--surface-hover); stroke-width: 8; }
-        .pomo-progress { fill: none; stroke: var(--primary); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 565.48; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+        .pomo-progress { fill: none; stroke: var(--primary); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 565.48; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
         .pomo-time { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
         .pomo-status { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
 
-        /* Weather */
         .weather-main { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
         .weather-temp { font-size: 3.5rem; font-weight: 800; line-height: 1; }
         .weather-desc { color: var(--secondary); font-weight: 600; margin-bottom: 10px; }
@@ -161,103 +153,93 @@
         .forecast-container::-webkit-scrollbar { display: none; }
         .forecast-card { background: var(--bg); padding: 12px; border-radius: 8px; min-width: 70px; text-align: center; flex-shrink: 0; scroll-snap-align: start; }
 
-        /* Password */
         .pass-display { background: var(--bg); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 1.25rem; text-align: center; letter-spacing: 2px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; word-break: break-all; min-height: 60px; display: flex; align-items: center; justify-content: center;}
         .strength-bar { height: 6px; background: var(--surface-hover); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
-        .strength-fill { height: 100%; width: 0%; background: var(--error); transition: all 0.3s; }
+        .strength-fill { height: 100%; width: 0%; background: var(--error); transition: width 0.3s, background-color 0.3s; will-change: width; }
         .check-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         
-        /* BMI */
         .bmi-scale { height: 12px; background: linear-gradient(to right, var(--secondary) 0%, var(--success) 35%, var(--success) 55%, #f59e0b 70%, var(--error) 85%); border-radius: 6px; position: relative; margin: 30px 0; }
-        .bmi-marker { position: absolute; top: -8px; width: 4px; height: 28px; background: #fff; border-radius: 2px; transform: translateX(-50%); transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1); left: 0%; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .bmi-marker { position: absolute; top: -8px; width: 4px; height: 28px; background: #fff; border-radius: 2px; transform: translateX(-50%); transition: left 0.4s ease; left: 0%; box-shadow: 0 0 5px rgba(0,0,0,0.5); will-change: left; }
         .bmi-result-text { text-align: center; font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
         .bmi-desc { text-align: center; color: var(--text-muted); font-size: 0.9rem; min-height: 40px; }
 
-        /* Kanban Specifics */
-        .kanban-task { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; cursor: grab; transition: var(--transition); }
+        .kanban-task { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; cursor: grab; transition: transform 0.2s; }
         .kanban-task:active { cursor: grabbing; transform: scale(0.98); border-color: var(--primary); }
         .kanban-dropzone { min-height: 200px; padding-bottom: 20px; }
 
-        /* Calculators Tabs */
         .tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 30px; overflow-x: auto; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { padding: 12px 24px; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; }
+        .tab-btn { padding: 12px 24px; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s; white-space: nowrap; }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Form */
         .form-group { margin-bottom: 20px; position: relative; }
         .form-label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
         .error-msg { color: var(--error); font-size: 0.8rem; margin-top: 5px; display: none; position: absolute; }
         .input.error { border-color: var(--error); }
         .success-overlay { position: absolute; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: var(--radius); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .success-overlay.show { opacity: 1; pointer-events: auto; }
-        .checkmark { width: 60px; height: 60px; border-radius: 50%; display: block; stroke-width: 2; stroke: var(--success); stroke-miterlimit: 10; box-shadow: inset 0px 0px 0px var(--success); animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; margin-bottom: 20px; }
-        .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
-        .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
-        @keyframes stroke { 100% { stroke-dashoffset: 0; } } @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } } @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 30px rgba(16,185,129,0.1); } }
-
-        /* Modals & Footer */
+        
         footer { background: var(--surface); padding: 60px 0 30px; border-top: 1px solid var(--border); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
         .footer-links { list-style: none; }
         .footer-links li { margin-bottom: 12px; }
         .footer-links a { color: var(--text-muted); }
-        .footer-links a:hover { color: var(--primary); }
         
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; backdrop-filter: blur(5px); }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; }
         .modal.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--surface); width: 100%; max-width: 600px; max-height: 80vh; border-radius: var(--radius); padding: 30px; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s; border: 1px solid var(--border); }
+        .modal-content { background: var(--surface); width: 100%; max-width: 600px; max-height: 80vh; border-radius: var(--radius); padding: 30px; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s; border: 1px solid var(--border); will-change: transform; }
         .modal.active .modal-content { transform: translateY(0); }
         .modal-close { position: absolute; top: 20px; right: 20px; background: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
 
-        #btt { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: var(--surface-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; pointer-events: none; transition: var(--transition); border: 1px solid var(--border); z-index: 999; }
-        #btt.visible { opacity: 1; pointer-events: auto; }
-        #btt:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        #btt { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: var(--surface-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; border: 1px solid var(--border); z-index: 999; will-change: opacity, transform; transform: translateY(20px); }
+        #btt.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
-        /* Demo Modal */
         #demo-modal .modal-content { text-align: center; }
         .demo-screen { width: 100%; height: 200px; background: var(--bg); border-radius: 8px; margin: 20px 0; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: monospace; color: var(--primary); }
-        .demo-bar { position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: rgba(124,58,237,0.1); animation: scan 2s linear infinite; }
+        .demo-bar { position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: rgba(124,58,237,0.1); animation: scan 2s linear infinite; will-change: transform; }
         @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
 
         /* ==========================================
-           MOBILE DESIGN PERFECTION (Media Queries)
+           ULTRA MOBILE OPTIMIZATION (GPU Accelerated)
            ========================================== */
         @media(max-width: 992px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
         @media(max-width: 768px) {
-            /* Premium Side-Drawer Mobile Menu */
+            /* Hardware Accelerated Drawer */
             .nav-links { 
-                position: fixed; top: 0; right: -100%; height: 100vh; width: 80%; max-width: 320px;
-                background: rgba(23, 23, 23, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                position: fixed; top: 0; right: 0; height: 100vh; width: 80%; max-width: 320px;
+                background: #111; /* Solid fallback */
+                background: rgba(17, 17, 17, 0.98); 
                 flex-direction: column; justify-content: center; align-items: flex-start;
                 padding: 40px; gap: 30px; border-left: 1px solid var(--border);
-                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-                z-index: 2001; display: flex; margin: 0; 
+                transform: translateX(100%); /* GPU Accelerated Slide */
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                z-index: 2001; display: flex; margin: 0; will-change: transform;
             }
-            .nav-links.show { right: 0; }
-            .nav-links a { font-size: 1.5rem; width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+            .nav-links.show { transform: translateX(0); }
+            .nav-links a { font-size: 1.3rem; width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
             .nav-links a.active::after { display: none; }
             .nav-links a.active { color: var(--primary); }
             .mobile-menu-btn { display: flex; }
             .nav-btn { display: none; }
             
-            /* Typography & Spacing adjustments */
-            .hero-content h1 { font-size: 2.8rem; }
-            .hero-content p { font-size: 1.1rem; }
+            /* Responsive Sizing */
             .section { padding: 60px 0; }
             .container { padding: 0 15px; }
+            .card { padding: 16px; } /* Smaller padding on mobile */
+            .grid { gap: 16px; } /* Tighter grids */
             
-            /* One Column Grid */
+            /* One Column Grid for 100 Tools */
             .tools-grid { grid-template-columns: 1fr; }
             
             /* Calc Adjustments */
             .calc-btn { padding: 12px; font-size: 1.2rem; }
-            .calc-display { padding: 15px; font-size: 1.2rem; }
+            .calc-display { padding: 15px; font-size: 1.2rem; min-height: 60px; margin-bottom: 10px; }
             
             /* Responsive Calculator Tabs */
             #tab-zins .grid { grid-template-columns: 1fr; }
@@ -266,17 +248,17 @@
             .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 30px; }
             .footer-grid .logo { justify-content: center; }
 
-            /* Swipeable Kanban for Mobile */
+            /* Swipeable Kanban for Mobile - Native scrolling */
             .kanban-wrapper { 
                 flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
                 scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none;
-                padding-bottom: 20px; gap: 15px;
+                padding-bottom: 15px; gap: 15px; -webkit-overflow-scrolling: touch;
             }
             .kanban-wrapper::-webkit-scrollbar { display: none; }
-            .kanban-col { min-width: 85%; scroll-snap-align: center; }
+            .kanban-col { min-width: 85%; scroll-snap-align: center; padding: 12px; }
             
             /* Modals */
-            .modal-content { padding: 20px; width: 95%; }
+            .modal-content { padding: 20px; width: 95%; max-height: 90vh; }
         }
     </style>
 </head>
@@ -295,7 +277,7 @@
             </div>
             <div class="flex gap-4">
                 <a href="#tools" class="btn btn-primary nav-btn">Jetzt starten</a>
-                <button class="mobile-menu-btn" id="mobileBtn">
+                <button class="mobile-menu-btn" id="mobileBtn" aria-label="Menu">
                     <span></span><span></span><span></span>
                 </button>
             </div>
@@ -318,11 +300,11 @@
 
     <section id="features" class="section">
         <div class="container">
-            <div class="text-center reveal" style="margin-bottom: 60px;">
+            <div class="text-center reveal" style="margin-bottom: 40px;">
                 <h2 style="font-size: 2.5rem; margin-bottom: 15px;">Tools. Null Ballast.</h2>
                 <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Hochleistungs-Werkzeuge direkt in deinem Browser. Keine Installation, kein Login.</p>
             </div>
-            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
                 <div class="card feature-card reveal">
                     <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
                     <h3>Live-Notizen</h3>
@@ -359,7 +341,7 @@
 
     <section id="tools" class="section" style="background: var(--surface);">
         <div class="container">
-            <h2 class="reveal text-center" style="font-size: 2.5rem; margin-bottom: 60px;">Dein Workspace. (100 Tools)</h2>
+            <h2 class="reveal text-center" style="font-size: 2.2rem; margin-bottom: 40px;">Dein Workspace. (100 Tools)</h2>
             <div class="grid tools-grid">
                 
                 <div class="card reveal" id="tool-notes">
@@ -615,7 +597,7 @@
 
                 <div class="card reveal text-center">
                     <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 19. Keycode</h3></div>
-                    <input type="text" class="input w-100 text-center mb-2" placeholder="Taste hier drücken..." onkeydown="event.preventDefault(); document.getElementById('kc-res').innerText=event.keyCode; document.getElementById('kc-code').innerText=event.code;">
+                    <input type="text" class="input w-100 text-center mb-2" placeholder="Taste drücken..." onkeydown="event.preventDefault(); document.getElementById('kc-res').innerText=event.keyCode; document.getElementById('kc-code').innerText=event.code;">
                     <div id="kc-res" style="font-size:3rem; font-weight:800; color:var(--primary)">-</div>
                     <div id="kc-code" style="color:var(--text-muted)">-</div>
                 </div>
@@ -661,7 +643,6 @@
                     <div class="flex gap-4 mb-2 align-center">
                         <input type="number" id="ar-w2" class="input flex-1"> : <input type="number" id="ar-h2" class="input flex-1" oninput="let w1=document.getElementById('ar-w1').value, h1=document.getElementById('ar-h1').value; document.getElementById('ar-w2').value=(w1/h1)*this.value;">
                     </div>
-                    <small style="color:var(--text-muted)">Höhe tippen für Breite.</small>
                 </div>
 
                 <div class="card reveal">
@@ -956,7 +937,7 @@
             <p style="color: var(--text-muted); font-size: 0.9rem;">Schnell. Lokal. Sicher.</p>
             <div class="demo-screen">
                 <div class="demo-bar"></div>
-                Initializing 100 Tools...<br>Status: MOBILE READY
+                Optimizing 100 Tools...<br>Status: 60FPS GPU ACCELERATED
             </div>
             <button class="btn btn-primary" onclick="closeModal('demo-modal'); window.location.href='#tools'">Selbst ausprobieren</button>
         </div>
@@ -992,34 +973,39 @@
             navLinksContainer.classList.toggle('show');
             mobileBtn.classList.toggle('open');
             menuOverlay.classList.toggle('show');
-            // Prevent background scrolling when menu is open
             document.body.style.overflow = navLinksContainer.classList.contains('show') ? 'hidden' : '';
         }
 
         mobileBtn.addEventListener('click', toggleMobileMenu);
         menuOverlay.addEventListener('click', toggleMobileMenu);
 
+        // --- High Performance Scroll Listener (Throttled) ---
+        let ticking = false;
         window.addEventListener('scroll', () => {
-            const y = window.scrollY;
-            if(y > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
-            if(y > 300) btt.classList.add('visible'); else btt.classList.remove('visible');
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const y = window.scrollY;
+                    if(y > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+                    if(y > 300) btt.classList.add('visible'); else btt.classList.remove('visible');
 
-            let current = '';
-            sections.forEach(sec => {
-                const top = sec.offsetTop - 100;
-                if(y >= top) current = sec.getAttribute('id');
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if(link.getAttribute('href') === `#${current}`) link.classList.add('active');
-            });
-        });
+                    let current = '';
+                    sections.forEach(sec => {
+                        const top = sec.offsetTop - 100;
+                        if(y >= top) current = sec.getAttribute('id');
+                    });
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if(link.getAttribute('href') === `#${current}`) link.classList.add('active');
+                    });
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
 
         // Close mobile menu when clicking a link
         navLinks.forEach(l => l.addEventListener('click', () => {
-            if(navLinksContainer.classList.contains('show')) {
-                toggleMobileMenu();
-            }
+            if(navLinksContainer.classList.contains('show')) toggleMobileMenu();
         }));
 
         const observer = new IntersectionObserver((entries) => {
@@ -1045,13 +1031,27 @@
         }
         setTimeout(typeWriter, 1000);
 
-        // --- Canvas Particles ---
+        // --- HIGH PERFORMANCE CANVAS PARTICLES ---
         function initParticles() {
             const canvas = document.getElementById('particles');
             const ctx = canvas.getContext('2d');
             let w, h, particles = [];
-            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = document.getElementById('hero').offsetHeight; };
+            let isMobile = window.innerWidth < 768;
+            let pCount = isMobile ? 15 : 60; // Less particles on mobile
+            let canvasRunning = true;
+
+            const resize = () => { 
+                w = canvas.width = window.innerWidth; 
+                h = canvas.height = document.getElementById('hero').offsetHeight; 
+                isMobile = window.innerWidth < 768;
+            };
             window.addEventListener('resize', resize); resize();
+
+            // Intersection Observer to stop drawing when not looking at header!
+            const heroObserver = new IntersectionObserver((entries) => {
+                canvasRunning = entries[0].isIntersecting;
+            });
+            heroObserver.observe(document.getElementById('hero'));
 
             class Particle {
                 constructor() { this.x = Math.random()*w; this.y = Math.random()*h; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.r = Math.random()*2+1; }
@@ -1061,15 +1061,20 @@
                 }
                 draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(124,58,237,0.5)'; ctx.fill(); }
             }
-            for(let i=0; i<60; i++) particles.push(new Particle());
+            for(let i=0; i<pCount; i++) particles.push(new Particle());
 
             function animate() {
-                ctx.clearRect(0, 0, w, h);
-                for(let i=0; i<particles.length; i++) {
-                    particles[i].update(); particles[i].draw();
-                    for(let j=i+1; j<particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.sqrt(dx*dx + dy*dy);
-                        if(dist < 120) { ctx.beginPath(); ctx.strokeStyle = `rgba(124,58,237,${1 - dist/120})`; ctx.lineWidth = 0.5; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke(); }
+                if(canvasRunning) {
+                    ctx.clearRect(0, 0, w, h);
+                    for(let i=0; i<particles.length; i++) {
+                        particles[i].update(); particles[i].draw();
+                        // No lines on mobile (MASSIVE performance boost)
+                        if(!isMobile) {
+                            for(let j=i+1; j<particles.length; j++) {
+                                const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.sqrt(dx*dx + dy*dy);
+                                if(dist < 120) { ctx.beginPath(); ctx.strokeStyle = `rgba(124,58,237,${1 - dist/120})`; ctx.lineWidth = 0.5; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke(); }
+                            }
+                        }
                     }
                 }
                 requestAnimationFrame(animate);
