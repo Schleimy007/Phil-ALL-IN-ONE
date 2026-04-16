@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phil: All In One OS - 100 Tools Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #171717;
+            --surface-hover: #262626;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --secondary: #06b6d4;
+            --text: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #333333;
+            --error: #ef4444;
+            --success: #10b981;
+            --radius: 12px;
+            --font: 'Inter', sans-serif;
+            --transition: all 0.2s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; line-height: 1.6; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Typography & Utils */
+        h1, h2, h3 { font-weight: 800; line-height: 1.2; }
+        a { color: inherit; text-decoration: none; transition: var(--transition); }
+        button, input, textarea, select { font-family: var(--font); outline: none; border: none; }
+        .container { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        .section { padding: 100px 0; }
+        .text-center { text-align: center; }
+        .grid { display: grid; gap: 24px; }
+        .flex { display: flex; align-items: center; }
+        .flex-col { display: flex; flex-direction: column; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-4 { gap: 16px; }
+        .gap-8 { gap: 32px; }
+        
+        /* New Micro-Utils */
+        .w-100 { width: 100%; }
+        .mt-2 { margin-top: 10px; }
+        .mb-2 { margin-bottom: 10px; }
+        .flex-1 { flex: 1; }
+        .align-center { align-items: center; }
+        .font-bold { font-weight: 800; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-primary { color: var(--primary); }
+        .font-mono { font-family: monospace; }
+        .flex-wrap { flex-wrap: wrap; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: var(--transition); text-align: center; }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 0 15px rgba(124,58,237,0.4); }
+        .btn-secondary { background: var(--surface-hover); color: var(--text); }
+        .btn-secondary:hover { background: var(--border); }
+        .btn-outline { border: 1px solid var(--border); background: transparent; color: var(--text); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* Inputs */
+        .input { width: 100%; padding: 12px 16px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text); transition: var(--transition); }
+        .input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
+
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .loader-logo { font-size: 3rem; font-weight: 800; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Nav */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 20px 0; transition: var(--transition); }
+        nav.scrolled { padding: 15px 0; background: rgba(10,10,10,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: baseline; }
+        .logo span { color: var(--primary); font-size: 2rem; line-height: 0; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); position: relative; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); }
+        .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+        .mobile-menu-btn { display: none; background: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+        /* Hero */
+        #hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; padding-top: 60px; }
+        #particles { position: absolute; inset: 0; z-index: 0; }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        .hero-content h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); margin-bottom: 24px; }
+        .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; }
+        .cursor { display: inline-block; width: 3px; background: var(--primary); animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Cards */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; transition: var(--transition); position: relative; overflow: hidden; }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px -10px rgba(124,58,237,0.3); border-color: rgba(124,58,237,0.5); }
+        .feature-icon { width: 48px; height: 48px; background: rgba(124,58,237,0.1); color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 24px; }
+        .feature-card h3 { margin-bottom: 12px; font-size: 1.25rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* Tools grid layout */
+        .tools-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+        /* Tool Specifics */
+        .tool-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        .tool-header h3 { display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .tool-header svg { width: 20px; height: 20px; color: var(--primary); flex-shrink: 0; }
+        
+        /* Notes */
+        #note-input, #note-preview { width: 100%; height: 250px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text); resize: none; overflow-y: auto; }
+        #note-preview { display: none; }
+        #note-preview h1, #note-preview h2, #note-preview h3 { margin-bottom: 10px; color: var(--primary); }
+        
+        /* Calc */
+        .calc-display { background: var(--bg); padding: 20px; border-radius: 8px; text-align: right; margin-bottom: 15px; font-size: 1.5rem; word-break: break-all; min-height: 70px; display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--border); }
+        .calc-history { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; min-height: 16px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { background: var(--surface-hover); border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: var(--transition); color: var(--text); }
+        .calc-btn:hover { background: var(--border); }
+        .calc-btn.op { background: rgba(124,58,237,0.1); color: var(--primary); }
+        .calc-btn.op:hover { background: rgba(124,58,237,0.2); }
+        .calc-btn.eq { background: var(--primary); color: #fff; grid-column: span 2; }
+        .calc-btn.eq:hover { background: var(--primary-hover); }
+
+        /* Pomodoro */
+        .pomo-circle { width: 200px; height: 200px; position: relative; margin: 0 auto 24px; }
+        .pomo-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .pomo-bg { fill: none; stroke: var(--surface-hover); stroke-width: 8; }
+        .pomo-progress { fill: none; stroke: var(--primary); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 565.48; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+        .pomo-time { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .pomo-status { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Weather */
+        .weather-main { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
+        .weather-temp { font-size: 3.5rem; font-weight: 800; line-height: 1; }
+        .weather-desc { color: var(--secondary); font-weight: 600; margin-bottom: 10px; }
+        .weather-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .w-stat { background: var(--bg); padding: 12px; border-radius: 8px; text-align: center; }
+        .w-stat-val { font-weight: 800; font-size: 1.1rem; }
+        .w-stat-lbl { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+        .forecast-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-top: 20px; }
+        .forecast-card { background: var(--bg); padding: 12px; border-radius: 8px; min-width: 70px; text-align: center; flex-shrink: 0; }
+
+        /* Password */
+        .pass-display { background: var(--bg); padding: 16px; border-radius: 8px; font-family: monospace; font-size: 1.25rem; text-align: center; letter-spacing: 2px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; word-break: break-all; min-height: 60px; display: flex; align-items: center; justify-content: center;}
+        .strength-bar { height: 6px; background: var(--surface-hover); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+        .strength-fill { height: 100%; width: 0%; background: var(--error); transition: all 0.3s; }
+        .check-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        
+        /* BMI */
+        .bmi-scale { height: 12px; background: linear-gradient(to right, var(--secondary) 0%, var(--success) 35%, var(--success) 55%, #f59e0b 70%, var(--error) 85%); border-radius: 6px; position: relative; margin: 30px 0; }
+        .bmi-marker { position: absolute; top: -8px; width: 4px; height: 28px; background: #fff; border-radius: 2px; transform: translateX(-50%); transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1); left: 0%; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .bmi-result-text { text-align: center; font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
+        .bmi-desc { text-align: center; color: var(--text-muted); font-size: 0.9rem; min-height: 40px; }
+
+        /* Kanban Specifics */
+        .kanban-task { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; cursor: grab; transition: var(--transition); }
+        .kanban-task:active { cursor: grabbing; transform: scale(0.98); }
+        .kanban-task:hover { border-color: var(--primary); }
+        .kanban-dropzone { min-height: 200px; padding-bottom: 20px; }
+
+        /* Calculators Tabs */
+        .tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 30px; overflow-x: auto; }
+        .tab-btn { padding: 12px 24px; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; }
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Form */
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        .error-msg { color: var(--error); font-size: 0.8rem; margin-top: 5px; display: none; position: absolute; }
+        .input.error { border-color: var(--error); }
+        .success-overlay { position: absolute; inset: 0; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: var(--radius); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .success-overlay.show { opacity: 1; pointer-events: auto; }
+        .checkmark { width: 60px; height: 60px; border-radius: 50%; display: block; stroke-width: 2; stroke: var(--success); stroke-miterlimit: 10; box-shadow: inset 0px 0px 0px var(--success); animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both; margin-bottom: 20px; }
+        .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 2; stroke-miterlimit: 10; stroke: var(--success); fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards; }
+        @keyframes stroke { 100% { stroke-dashoffset: 0; } } @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } } @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 30px rgba(16,185,129,0.1); } }
+
+        /* Modals & Footer */
+        footer { background: var(--surface); padding: 60px 0 30px; border-top: 1px solid var(--border); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: var(--text-muted); }
+        .footer-links a:hover { color: var(--primary); }
+        
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 600px; max-height: 80vh; border-radius: var(--radius); padding: 30px; overflow-y: auto; position: relative; transform: translateY(20px); transition: transform 0.3s; border: 1px solid var(--border); }
+        .modal.active .modal-content { transform: translateY(0); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+        #btt { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background: var(--surface-hover); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; pointer-events: none; transition: var(--transition); border: 1px solid var(--border); z-index: 999; }
+        #btt.visible { opacity: 1; pointer-events: auto; }
+        #btt:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* Demo Modal */
+        #demo-modal .modal-content { text-align: center; }
+        .demo-screen { width: 100%; height: 200px; background: var(--bg); border-radius: 8px; margin: 20px 0; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: monospace; color: var(--primary); }
+        .demo-bar { position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: rgba(124,58,237,0.1); animation: scan 2s linear infinite; }
+        @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+
+        /* Media Queries */
+        @media(max-width: 992px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media(max-width: 768px) {
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); flex-direction: column; padding: 20px; gap: 20px; border-bottom: 1px solid var(--border); }
+            .nav-links.show { display: flex; }
+            .mobile-menu-btn { display: block; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .calc-grid { grid-template-columns: repeat(4, 1fr); }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-grid .logo { justify-content: center; }
+            .nav-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="loader-logo">Phil<span style="color:var(--primary)">.</span></div></div>
+
+    <nav id="nav">
+        <div class="container nav-inner">
+            <a href="#hero" class="logo">Phil<span>.</span></a>
+            <div class="nav-links" id="navLinks">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#tools" class="nav-link">Tools</a>
+                <a href="#rechner" class="nav-link">Rechner</a>
+                <a href="#kontakt" class="nav-link">Kontakt</a>
+            </div>
+            <div class="flex gap-4">
+                <a href="#tools" class="btn btn-primary nav-btn">Jetzt starten</a>
+                <button class="mobile-menu-btn" id="mobileBtn">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <header id="hero">
+        <canvas id="particles"></canvas>
+        <div class="container hero-content">
+            <h1 class="reveal">Alles für deine <br><span id="typewriter" style="color:var(--primary);"></span><span class="cursor">|</span></h1>
+            <p class="reveal" style="transition-delay: 0.1s">Phil vereint alle Tools die du täglich brauchst — ohne Tab-Chaos. Eine Seite, unendliche Möglichkeiten.</p>
+            <div class="flex justify-center gap-4 reveal" style="transition-delay: 0.2s">
+                <a href="#features" class="btn btn-primary">Jetzt entdecken</a>
+                <button class="btn btn-secondary" onclick="openModal('demo-modal')">Demo ansehen</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="section">
+        <div class="container">
+            <div class="text-center reveal" style="margin-bottom: 60px;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 15px;">Tools. Null Ballast.</h2>
+                <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Hochleistungs-Werkzeuge direkt in deinem Browser. Keine Installation, kein Login.</p>
+            </div>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="card feature-card reveal">
+                    <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+                    <h3>Live-Notizen</h3>
+                    <p>Autosave in Echtzeit, Markdown-Support und One-Click Download. Deine Gedanken sicher gespeichert.</p>
+                </div>
+                <div class="card feature-card reveal" style="transition-delay: 0.1s">
+                    <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="8" y1="14" x2="8" y2="18"/></svg></div>
+                    <h3>Profi-Rechner</h3>
+                    <p>Wissenschaftliche Funktionen, History-Log und voller Tastatur-Support für schnelle Berechnungen.</p>
+                </div>
+                <div class="card feature-card reveal" style="transition-delay: 0.2s">
+                    <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19C19.985 19 22 16.985 22 14.5C22 12.015 19.985 10 17.5 10C17.133 10 16.776 10.043 16.435 10.125C15.65 6.643 12.56 4 8.85 4C4.514 4 1 7.514 1 11.85C1 12.528 1.086 13.187 1.246 13.818C1.085 14.037 1 14.26 1 14.5C1 16.985 3.015 19 5.5 19H17.5Z"/></svg></div>
+                    <h3>Echtzeit-Wetter</h3>
+                    <p>Standortbasiert oder weltweit. Aktuelle Daten und 7-Tage-Vorschau via OpenMeteo.</p>
+                </div>
+                <div class="card feature-card reveal">
+                    <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <h3>Pomodoro Timer</h3>
+                    <p>Fokus-Intervalle mit flüssiger SVG-Animation und synthetisiertem Audio-Feedback.</p>
+                </div>
+                <div class="card feature-card reveal" style="transition-delay: 0.1s">
+                    <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                    <h3>Passwort Gen</h3>
+                    <p>Militärstandard-Passwörter auf Knopfdruck. Lokal generiert, extrem sicher.</p>
+                </div>
+                <div class="card feature-card reveal" style="transition-delay: 0.2s">
+                    <div class="feature-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                    <h3>Gesundheits-BMI</h3>
+                    <p>Visuelle Auswertung deines Body-Mass-Index mit sofortigem Feedback und Tipps.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="section" style="background: var(--surface);">
+        <div class="container">
+            <h2 class="reveal text-center" style="font-size: 2.5rem; margin-bottom: 60px;">Dein Workspace. (100 Tools)</h2>
+            <div class="grid tools-grid">
+                
+                <div class="card reveal" id="tool-notes">
+                    <div class="tool-header">
+                        <h3><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> 1. Markdown Notizen</h3>
+                        <div class="flex gap-4">
+                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" id="noteToggleBtn">Vorschau</button>
+                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" id="noteDlBtn">.txt</button>
+                        </div>
+                    </div>
+                    <textarea id="note-input" placeholder="# Headline&#10;**Bold text**&#10;*Italic*&#10;Schreibe deine Gedanken..."></textarea>
+                    <div id="note-preview"></div>
+                    <div class="flex justify-between" style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+                        <span id="note-chars">0 Zeichen</span>
+                        <button id="note-clear" style="background:none; color:var(--error); cursor:pointer;">Löschen</button>
+                    </div>
+                </div>
+
+                <div class="card reveal" id="tool-calc">
+                    <div class="tool-header">
+                        <h3><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="8" y1="10" x2="8" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="8" y1="14" x2="8" y2="18"/></svg> 2. Scientific Calc</h3>
+                    </div>
+                    <div class="calc-display">
+                        <div class="calc-history" id="calc-hist"></div>
+                        <div id="calc-val">0</div>
+                    </div>
+                    <div class="calc-grid">
+                        <button class="calc-btn op" onclick="calcInput('(')">(</button>
+                        <button class="calc-btn op" onclick="calcInput(')')">)</button>
+                        <button class="calc-btn op" onclick="calcInput('sin(')">sin</button>
+                        <button class="calc-btn op" onclick="calcInput('cos(')">cos</button>
+                        <button class="calc-btn" onclick="calcInput('7')">7</button>
+                        <button class="calc-btn" onclick="calcInput('8')">8</button>
+                        <button class="calc-btn" onclick="calcInput('9')">9</button>
+                        <button class="calc-btn op" onclick="calcInput('/')">÷</button>
+                        <button class="calc-btn" onclick="calcInput('4')">4</button>
+                        <button class="calc-btn" onclick="calcInput('5')">5</button>
+                        <button class="calc-btn" onclick="calcInput('6')">6</button>
+                        <button class="calc-btn op" onclick="calcInput('*')">×</button>
+                        <button class="calc-btn" onclick="calcInput('1')">1</button>
+                        <button class="calc-btn" onclick="calcInput('2')">2</button>
+                        <button class="calc-btn" onclick="calcInput('3')">3</button>
+                        <button class="calc-btn op" onclick="calcInput('-')">-</button>
+                        <button class="calc-btn" onclick="calcInput('0')">0</button>
+                        <button class="calc-btn" onclick="calcInput('.')">.</button>
+                        <button class="calc-btn" style="color:var(--error);" onclick="calcClear()">C</button>
+                        <button class="calc-btn op" onclick="calcInput('+')">+</button>
+                        <button class="calc-btn op" onclick="calcInput('sqrt(')">√</button>
+                        <button class="calc-btn op" onclick="calcInput('^')">^</button>
+                        <button class="calc-btn eq" onclick="calcEval()">=</button>
+                    </div>
+                </div>
+
+                <div class="card reveal" id="tool-weather">
+                    <div class="tool-header">
+                        <h3><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.5 19C19.985 19 22 16.985 22 14.5C22 12.015 19.985 10 17.5 10C17.133 10 16.776 10.043 16.435 10.125C15.65 6.643 12.56 4 8.85 4C4.514 4 1 7.514 1 11.85C1 12.528 1.086 13.187 1.246 13.818C1.085 14.037 1 14.26 1 14.5C1 16.985 3.015 19 5.5 19H17.5Z"/></svg> 3. Live Wetter</h3>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="getGeoWeather()">📍 Auto</button>
+                    </div>
+                    <div class="flex gap-4 mb-4" style="margin-bottom: 20px;">
+                        <input type="text" id="w-city-input" class="input" placeholder="Stadt eingeben...">
+                        <button class="btn btn-primary" onclick="searchWeather()">Suchen</button>
+                    </div>
+                    <div id="w-content" style="display:none;">
+                        <h4 id="w-city-name" style="font-size: 1.2rem;">-</h4>
+                        <div class="weather-main">
+                            <div>
+                                <div class="weather-temp" id="w-temp">--°</div>
+                                <div class="weather-desc" id="w-desc">--</div>
+                            </div>
+                            <div id="w-icon" style="color:var(--primary);"></div>
+                        </div>
+                        <div class="weather-stats">
+                            <div class="w-stat"><div class="w-stat-val" id="w-wind">--</div><div class="w-stat-lbl">Wind</div></div>
+                            <div class="w-stat"><div class="w-stat-val" id="w-hum">--</div><div class="w-stat-lbl">Feuchte</div></div>
+                        </div>
+                        <div class="forecast-container" id="w-forecast"></div>
+                    </div>
+                    <div id="w-loading" style="text-align:center; padding: 40px 0; color:var(--text-muted);">Daten werden geladen...</div>
+                </div>
+
+                <div class="card reveal" id="tool-pomo" style="text-align: center;">
+                    <div class="tool-header" style="text-align: left;">
+                        <h3><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 4. Pomodoro</h3>
+                    </div>
+                    <div class="pomo-circle">
+                        <svg class="pomo-svg" viewBox="0 0 200 200">
+                            <circle class="pomo-bg" cx="100" cy="100" r="90"/>
+                            <circle class="pomo-progress" id="pomo-ring" cx="100" cy="100" r="90"/>
+                        </svg>
+                        <div class="pomo-time">
+                            <span id="pomo-time-str">25:00</span>
+                            <span class="pomo-status" id="pomo-mode">Fokus</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button class="btn btn-primary" id="pomo-start">Start</button>
+                        <button class="btn btn-secondary" id="pomo-reset">Reset</button>
+                    </div>
+                    <div class="flex justify-center gap-4" style="margin-top: 20px;">
+                        <div style="font-size: 0.8rem;">
+                            <label style="display:block; color:var(--text-muted);">Arbeit (m)</label>
+                            <input type="number" id="pomo-w-in" value="25" class="input" style="width:70px; padding: 5px; text-align:center;">
+                        </div>
+                        <div style="font-size: 0.8rem;">
+                            <label style="display:block; color:var(--text-muted);">Pause (m)</label>
+                            <input type="number" id="pomo-p-in" value="5" class="input" style="width:70px; padding: 5px; text-align:center;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card reveal" id="tool-pass">
+                    <div class="tool-header">
+                        <h3><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 5. Password Gen</h3>
+                    </div>
+                    <div class="pass-display" id="pass-out">Click Generate</div>
+                    <div class="flex justify-between" style="font-size: 0.8rem; margin-bottom: 5px; color:var(--text-muted);">
+                        <span>Sicherheit</span>
+                        <span id="pass-str-text">Schwach</span>
+                    </div>
+                    <div class="strength-bar"><div class="strength-fill" id="pass-str-fill"></div></div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <div class="flex justify-between mb-2">
+                            <label>Länge: <span id="pass-len-val">16</span></label>
+                        </div>
+                        <input type="range" id="pass-len" min="8" max="64" value="16" style="width:100%; cursor:pointer; accent-color: var(--primary);">
+                    </div>
+                    
+                    <div class="check-group"><label>Großbuchstaben</label><input type="checkbox" id="pass-u" checked style="accent-color: var(--primary); transform: scale(1.2);"></div>
+                    <div class="check-group"><label>Kleinbuchstaben</label><input type="checkbox" id="pass-l" checked style="accent-color: var(--primary); transform: scale(1.2);"></div>
+                    <div class="check-group"><label>Zahlen</label><input type="checkbox" id="pass-n" checked style="accent-color: var(--primary); transform: scale(1.2);"></div>
+                    <div class="check-group"><label>Sonderzeichen</label><input type="checkbox" id="pass-s" checked style="accent-color: var(--primary); transform: scale(1.2);"></div>
+                    
+                    <div class="flex gap-4" style="margin-top:20px;">
+                        <button class="btn btn-secondary" onclick="generatePass()" style="flex:1;">Neu Generieren</button>
+                        <button class="btn btn-primary" onclick="copyPass()" id="pass-copy-btn">Kopieren</button>
+                    </div>
+                </div>
+
+                <div class="card reveal" id="tool-bmi">
+                    <div class="tool-header">
+                        <h3><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> 6. BMI Analyse</h3>
+                    </div>
+                    <div class="flex gap-4" style="margin-bottom: 20px;">
+                        <div style="flex:1;">
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Größe (cm)</label>
+                            <input type="number" id="bmi-h" class="input" value="175" oninput="calcBMI()">
+                        </div>
+                        <div style="flex:1;">
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Gewicht (kg)</label>
+                            <input type="number" id="bmi-w" class="input" value="70" oninput="calcBMI()">
+                        </div>
+                    </div>
+                    <div style="background: var(--bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div class="bmi-result-text">BMI: <span id="bmi-res">22.9</span></div>
+                        <div class="bmi-scale">
+                            <div class="bmi-marker" id="bmi-marker"></div>
+                        </div>
+                        <div class="bmi-desc" id="bmi-desc" style="color: var(--success);">Normalgewicht. Weiter so!</div>
+                    </div>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 8. Word Counter</h3></div>
+                    <textarea id="wc-in" class="input w-100" rows="3" oninput="let v=this.value; document.getElementById('wc-w').innerText=v.trim()?v.trim().split(/\s+/).length:0; document.getElementById('wc-c').innerText=v.length;"></textarea>
+                    <div class="flex justify-between mt-2"><span id="wc-w">0</span> Worte | <span id="wc-c">0</span> Zeichen</div>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 9. Stoppuhr</h3></div>
+                    <div id="sw-time" class="text-center" style="font-size:2rem; font-weight:800; font-variant-numeric:tabular-nums; margin:10px 0;">00:00.00</div>
+                    <div class="flex gap-4 mt-2">
+                        <button class="btn btn-primary flex-1" onclick="if(!window.swI){let st=Date.now()-(window.swE||0); window.swI=setInterval(()=>{window.swE=Date.now()-st; let m=Math.floor(window.swE/60000), s=Math.floor((window.swE%60000)/1000), ms=Math.floor((window.swE%1000)/10); document.getElementById('sw-time').innerText=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}.${ms.toString().padStart(2,'0')}`;},10);}else{clearInterval(window.swI); window.swI=null;}">Start/Stop</button>
+                        <button class="btn btn-secondary flex-1" onclick="clearInterval(window.swI); window.swI=null; window.swE=0; document.getElementById('sw-time').innerText='00:00.00';">Reset</button>
+                    </div>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 10. Zufallszahl</h3></div>
+                    <div class="flex gap-4 mb-2">
+                        <input type="number" id="rn-min" class="input flex-1" value="1">
+                        <input type="number" id="rn-max" class="input flex-1" value="100">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="let min=parseInt(document.getElementById('rn-min').value), max=parseInt(document.getElementById('rn-max').value); document.getElementById('rn-res').innerText=Math.floor(Math.random()*(max-min+1))+min;">Generieren</button>
+                    <div id="rn-res" class="text-center mt-2" style="font-size:2rem; font-weight:800;">-</div>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 11. Münzwurf</h3></div>
+                    <div id="coin-res" style="font-size:3rem; font-weight:800; margin: 10px 0;">🪙</div>
+                    <button class="btn btn-primary w-100" onclick="document.getElementById('coin-res').innerText='...'; setTimeout(()=>document.getElementById('coin-res').innerText=Math.random()>0.5?'Kopf':'Zahl', 500);">Werfen</button>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 12. Würfel</h3></div>
+                    <div id="dice-res" style="font-size:3rem; font-weight:800; margin: 10px 0;">🎲</div>
+                    <button class="btn btn-primary w-100" onclick="document.getElementById('dice-res').innerText='...'; setTimeout(()=>document.getElementById('dice-res').innerText=Math.floor(Math.random()*6)+1, 300);">Würfeln</button>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 13. Text Format</h3></div>
+                    <textarea id="tc-in" class="input w-100" rows="2"></textarea>
+                    <div class="flex gap-4 mt-2">
+                        <button class="btn btn-secondary flex-1" onclick="let el=document.getElementById('tc-in'); el.value=el.value.toUpperCase();">UP</button>
+                        <button class="btn btn-secondary flex-1" onclick="let el=document.getElementById('tc-in'); el.value=el.value.toLowerCase();">low</button>
+                        <button class="btn btn-secondary flex-1" onclick="let el=document.getElementById('tc-in'); el.value=el.value.replace(/\b\w/g, c=>c.toUpperCase());">Title</button>
+                    </div>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 14. Base64</h3></div>
+                    <textarea id="b64-in" class="input w-100" rows="2"></textarea>
+                    <div class="flex gap-4 mt-2">
+                        <button class="btn btn-primary flex-1" onclick="try{document.getElementById('b64-in').value=btoa(document.getElementById('b64-in').value)}catch(e){alert('Fehler')}">Encode</button>
+                        <button class="btn btn-secondary flex-1" onclick="try{document.getElementById('b64-in').value=atob(document.getElementById('b64-in').value)}catch(e){alert('Fehler')}">Decode</button>
+                    </div>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 15. URL Encode</h3></div>
+                    <textarea id="url-in" class="input w-100" rows="2"></textarea>
+                    <div class="flex gap-4 mt-2">
+                        <button class="btn btn-primary flex-1" onclick="document.getElementById('url-in').value=encodeURIComponent(document.getElementById('url-in').value)">Encode</button>
+                        <button class="btn btn-secondary flex-1" onclick="document.getElementById('url-in').value=decodeURIComponent(document.getElementById('url-in').value)">Decode</button>
+                    </div>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 16. UUID v4</h3></div>
+                    <input type="text" id="uuid-res" class="input w-100 mb-2 mt-2 text-center" readonly>
+                    <button class="btn btn-primary w-100" onclick="document.getElementById('uuid-res').value=crypto.randomUUID()">Generieren</button>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 17. Dreisatz</h3></div>
+                    <div class="flex gap-4 mb-2 align-center">
+                        <input type="number" id="ds-a" class="input flex-1"> <span>ist</span> <input type="number" id="ds-b" class="input flex-1">
+                    </div>
+                    <div class="flex gap-4 mb-2 align-center">
+                        <input type="number" id="ds-c" class="input flex-1"> <span>ist</span> <input type="number" id="ds-d" class="input flex-1" readonly style="background:var(--bg)">
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="let a=document.getElementById('ds-a').value, b=document.getElementById('ds-b').value, c=document.getElementById('ds-c').value; if(a) document.getElementById('ds-d').value=(b*c)/a;">Berechnen</button>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 18. Prozent</h3></div>
+                    <div class="flex gap-4 mb-2 align-center">
+                        <input type="number" id="pc-a" class="input flex-1"> <span>% von</span> <input type="number" id="pc-b" class="input flex-1">
+                    </div>
+                    <div class="text-center font-bold text-2xl mb-2" id="pc-res">-</div>
+                    <button class="btn btn-primary w-100" onclick="let a=document.getElementById('pc-a').value, b=document.getElementById('pc-b').value; document.getElementById('pc-res').innerText=(a*b/100);">Berechnen</button>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 19. Keycode</h3></div>
+                    <input type="text" class="input w-100 text-center mb-2" placeholder="Taste hier drücken..." onkeydown="event.preventDefault(); document.getElementById('kc-res').innerText=event.keyCode; document.getElementById('kc-code').innerText=event.code;">
+                    <div id="kc-res" style="font-size:3rem; font-weight:800; color:var(--primary)">-</div>
+                    <div id="kc-code" style="color:var(--text-muted)">-</div>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 20. Color HEX</h3></div>
+                    <input type="color" id="cp-in" class="w-100 mb-2" style="height:50px; cursor:pointer; background:none; border:none;" oninput="document.getElementById('cp-res').innerText=this.value;">
+                    <div id="cp-res" class="font-mono text-xl mt-2">#000000</div>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 21. Display Size</h3></div>
+                    <div id="sr-res" style="font-size:2.5rem; font-weight:800; margin:10px 0; color:var(--secondary)">-</div>
+                    <button class="btn btn-outline w-100" onclick="document.getElementById('sr-res').innerText=window.innerWidth+'x'+window.innerHeight;">Auflösung abrufen</button>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 22. IP Adresse</h3></div>
+                    <div id="ip-res" style="font-size:1.5rem; font-weight:800; margin:15px 0;">-</div>
+                    <button class="btn btn-primary w-100" onclick="document.getElementById('ip-res').innerText='Lade...'; fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>document.getElementById('ip-res').innerText=d.ip).catch(()=>document.getElementById('ip-res').innerText='Fehler');">IP abrufen</button>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 23. Text -> Binär</h3></div>
+                    <textarea id="tb-in" class="input w-100" rows="2"></textarea>
+                    <button class="btn btn-primary w-100 mt-2 mb-2" onclick="document.getElementById('tb-out').value=document.getElementById('tb-in').value.split('').map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');">Übersetzen</button>
+                    <textarea id="tb-out" class="input w-100" rows="2" readonly style="background:var(--bg)"></textarea>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 24. QR Code</h3></div>
+                    <input type="text" id="qr-in" class="input w-100 mb-2" placeholder="Text oder URL">
+                    <button class="btn btn-primary w-100 mb-2" onclick="let v=document.getElementById('qr-in').value; if(v) document.getElementById('qr-img').src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='+encodeURIComponent(v);">Generieren</button>
+                    <img id="qr-img" src="" style="width:150px; height:150px; background:var(--surface-hover); margin:0 auto; border-radius:8px;">
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 25. Aspect Ratio</h3></div>
+                    <div class="flex gap-4 mb-2 align-center">
+                        <input type="number" id="ar-w1" class="input flex-1" value="1920"> : <input type="number" id="ar-h1" class="input flex-1" value="1080">
+                    </div>
+                    <div class="text-center mb-2" style="color:var(--text-muted)">entspricht</div>
+                    <div class="flex gap-4 mb-2 align-center">
+                        <input type="number" id="ar-w2" class="input flex-1"> : <input type="number" id="ar-h2" class="input flex-1" oninput="let w1=document.getElementById('ar-w1').value, h1=document.getElementById('ar-h1').value; document.getElementById('ar-w2').value=(w1/h1)*this.value;">
+                    </div>
+                    <small style="color:var(--text-muted)">Höhe tippen für Breite.</small>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 26. Text Reverser</h3></div>
+                    <textarea id="rev-in" class="input w-100 mb-2" rows="2" placeholder="Rückwärts..."></textarea>
+                    <button class="btn btn-primary w-100" onclick="let e=document.getElementById('rev-in'); e.value=e.value.split('').reverse().join('');">Umdrehen</button>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 27. JSON Format</h3></div>
+                    <textarea id="json-in" class="input w-100 mb-2 font-mono" rows="3" placeholder='{"a":1}'></textarea>
+                    <button class="btn btn-primary w-100" onclick="try{ let e=document.getElementById('json-in'); e.value=JSON.stringify(JSON.parse(e.value), null, 4); e.style.borderColor='var(--border)'; }catch(err){ document.getElementById('json-in').style.borderColor='var(--error)'; }">Pretty Print</button>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 28. White Noise</h3></div>
+                    <div id="wn-icon" style="font-size:3rem; margin:10px 0; transition:all 0.3s;">🌊</div>
+                    <button class="btn btn-primary w-100" onclick="if(!window.wnCtx){window.wnCtx=new (window.AudioContext||window.webkitAudioContext)(); let bs=window.wnCtx.createBufferSource(), bf=window.wnCtx.createBuffer(1, window.wnCtx.sampleRate*2, window.wnCtx.sampleRate), cd=bf.getChannelData(0); for(let i=0;i<cd.length;i++)cd[i]=Math.random()*2-1; bs.buffer=bf; bs.loop=true; bs.connect(window.wnCtx.destination); bs.start(); this.innerText='Stop'; document.getElementById('wn-icon').style.transform='scale(1.2)';}else{window.wnCtx.close(); window.wnCtx=null; this.innerText='Play'; document.getElementById('wn-icon').style.transform='scale(1)';}">Fokus Audio</button>
+                </div>
+
+                <div class="card reveal text-center">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 29. 6 aus 49</h3></div>
+                    <div id="lotto-res" class="flex justify-center gap-4 flex-wrap mt-2 mb-2" style="min-height:30px;">
+                        <span style="color:var(--text-muted)">?</span>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="let nums=new Set(); while(nums.size<6) nums.add(Math.floor(Math.random()*49)+1); document.getElementById('lotto-res').innerHTML=[...nums].sort((a,b)=>a-b).map(n=>`<div class='w-stat-val' style='width:30px;height:30px;border-radius:50%;background:var(--primary);line-height:30px;color:#fff;'>${n}</div>`).join('');">Ziehen</button>
+                </div>
+
+                <div class="card reveal">
+                    <div class="tool-header"><h3><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> 30. Unix Epoch</h3></div>
+                    <input type="number" id="ts-in" class="input w-100 mb-2" placeholder="Timestamp in ms">
+                    <button class="btn btn-primary w-100 mb-2" onclick="let v=document.getElementById('ts-in').value; if(v) document.getElementById('ts-out').innerText=new Date(parseInt(v)).toLocaleString(); else document.getElementById('ts-out').innerText=Date.now();">Datum / Ms</button>
+                    <div id="ts-out" class="text-center font-bold mt-2">-</div>
+                </div>
+
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 31. ROT13</h3></div><input class="input w-100 mb-2" placeholder="Text..." oninput="this.nextElementSibling.innerText=this.value.replace(/[a-zA-Z]/g,c=>String.fromCharCode((c<='Z'?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26))"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 32. Vokale</h3></div><input class="input w-100 mb-2" oninput="this.nextElementSibling.innerText=(this.value.match(/[aeiouäöüAEIOUÄÖÜ]/g)||[]).length"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 33. Konsonanten</h3></div><input class="input w-100 mb-2" oninput="this.nextElementSibling.innerText=(this.value.match(/[^aeiouäöüAEIOUÄÖÜ\W\d_]/g)||[]).length"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 34. Palindrom</h3></div><input class="input w-100 mb-2" oninput="let s=this.value.toLowerCase().replace(/[\W_]/g,'');this.nextElementSibling.innerText=s.length?(s===s.split('').reverse().join('')?'Ja':'Nein'):'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 35. Slug Gen</h3></div><input class="input w-100 mb-2" oninput="this.nextElementSibling.innerText=this.value.toLowerCase().replace(/[^\w\s-]/g,'').replace(/[\s_-]+/g,'-').replace(/(^-|-$)/g,'')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 36. No Spaces</h3></div><input class="input w-100 mb-2" oninput="this.nextElementSibling.innerText=this.value.replace(/\s+/g,'')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 37. HTML Enc</h3></div><input class="input w-100 mb-2" oninput="let t=document.createElement('div');t.innerText=this.value;this.nextElementSibling.innerText=t.innerHTML"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 38. HTML Dec</h3></div><input class="input w-100 mb-2" oninput="let t=document.createElement('div');t.innerHTML=this.value;this.nextElementSibling.innerText=t.innerText"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 39. Shuffle Text</h3></div><input class="input w-100 mb-2" oninput="this.nextElementSibling.innerText=this.value.split('').sort(()=>0.5-Math.random()).join('')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 40. Morse Code</h3></div><input class="input w-100 mb-2" oninput="let m={a:'.-',b:'-...',c:'-.-.',d:'-..',e:'.',f:'..-.',g:'--.',h:'....',i:'..',j:'.---',k:'-.-',l:'.-..',m:'--',n:'-.',o:'---',p:'.--.',q:'--.-',r:'.-.',s:'...',t:'-',u:'..-',v:'...-',w:'.--',x:'-..-',y:'-.--',z:'--..',' ':'/'}; this.nextElementSibling.innerText=this.value.toLowerCase().split('').map(c=>m[c]||c).join(' ')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 41. Gerade/Ung.</h3></div><input type="number" class="input w-100 mb-2" oninput="this.nextElementSibling.innerText=this.value===''?'':(this.value%2===0?'Gerade':'Ungerade')"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 42. Primzahl</h3></div><input type="number" class="input w-100 mb-2" oninput="let n=this.value,p=n>1;for(let i=2;i<n;i++)if(n%i===0)p=false;this.nextElementSibling.innerText=this.value===''?'':(p?'Primzahl':'Keine Primzahl')"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 43. Fakultät (!)</h3></div><input type="number" class="input w-100 mb-2" max="170" oninput="let f=1;for(let i=2;i<=this.value;i++)f*=i;this.nextElementSibling.innerText=this.value===''?'':f"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 44. Fibonacci</h3></div><input type="number" class="input w-100 mb-2" oninput="let n=this.value,a=0,b=1,c;for(let i=2;i<=n;i++){c=a+b;a=b;b=c;};this.nextElementSibling.innerText=n==0?0:(n==1?1:b)"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 45. Hex > RGB</h3></div><input class="input w-100 mb-2" placeholder="#ffffff" oninput="let h=this.value.replace('#','');this.nextElementSibling.innerText=h.length===6?'rgb('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+')':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 46. RGB > Hex</h3></div><input class="input w-100 mb-2" placeholder="255, 255, 255" oninput="let m=this.value.match(/(\d+)/g);this.nextElementSibling.innerText=m&&m.length===3?'#'+m.map(x=>parseInt(x).toString(16).padStart(2,'0')).join(''):'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 47. Zufalls-RGB</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let c='rgb('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+')';this.nextElementSibling.innerText=c;this.nextElementSibling.style.color=c;">RGB Generieren</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 48. Zufalls-HEX</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let c='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');this.nextElementSibling.innerText=c;this.nextElementSibling.style.color=c;">HEX Generieren</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 49. GGT</h3></div><input id="ggt1" type="number" class="input w-100 mb-2" placeholder="Zahl 1"><input type="number" class="input w-100 mb-2" placeholder="Zahl 2" oninput="let a=document.getElementById('ggt1').value,b=this.value;while(b){let t=b;b=a%b;a=t;}this.nextElementSibling.innerText=a||'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 50. KGV</h3></div><input id="kgv1" type="number" class="input w-100 mb-2" placeholder="Zahl 1"><input type="number" class="input w-100 mb-2" placeholder="Zahl 2" oninput="let a=document.getElementById('kgv1').value,b=this.value,c=a,d=b;while(d){let t=d;d=c%d;c=t;}this.nextElementSibling.innerText=(a*b)/c||'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 51. Tag d. Jahres</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let d=new Date();this.nextElementSibling.innerText=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000)">Berechnen</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 52. Kalenderwoche</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let d=new Date(),t=new Date(d.valueOf());t.setDate(t.getDate()-(d.getDay()+6)%7+3);this.nextElementSibling.innerText=Math.round(((t.valueOf()-new Date(t.getFullYear(),0,4).valueOf())/86400000+1)/7)+1">Berechnen</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 53. Schaltjahr</h3></div><input type="number" class="input w-100 mb-2" placeholder="Jahr..." oninput="let y=this.value;this.nextElementSibling.innerText=y===''?'':((y%4==0&&y%100!=0)||y%400==0?'Ja':'Nein')"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 54. Tage b. Neujahr</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let d=new Date();this.nextElementSibling.innerText=Math.ceil((new Date(d.getFullYear()+1,0,1)-d)/86400000)">Berechnen</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 55. Live Uhrzeit</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="if(!window.livet)window.livet=setInterval(()=>this.nextElementSibling.innerText=new Date().toLocaleTimeString(),1000);else{clearInterval(window.livet);window.livet=null;this.nextElementSibling.innerText='-'}">Start / Stop</button><div class="font-bold text-primary text-xl">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 56. TZ Offset</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=-(new Date().getTimezoneOffset()/60)+' Stunden'">Check</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 57. Tally Counter</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=parseInt(this.nextElementSibling.innerText)+1">+1 Klick</button><div class="font-bold text-primary text-2xl">0</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 58. W20 Würfel</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=Math.floor(Math.random()*20)+1">Würfeln (1-20)</button><div class="font-bold text-primary text-2xl">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 59. W100 Würfel</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=Math.floor(Math.random()*100)+1">Würfeln (1-100)</button><div class="font-bold text-primary text-2xl">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 60. Magic 8-Ball</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let a=['Ja','Nein','Vielleicht','Frag später','Definitiv','Niemals'];this.nextElementSibling.innerText=a[Math.floor(Math.random()*a.length)]">Fragen</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 61. Ja/Nein</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=Math.random()>0.5?'Ja':'Nein'">Generieren</button><div class="font-bold text-primary text-xl">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 62. Zufalls-Zeichen</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=String.fromCharCode(65+Math.floor(Math.random()*26))">Generieren</button><div class="font-bold text-primary text-2xl">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 63. Zufalls-Emoji</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let e=['😀','🚀','🐱','🍕','🎸','🔥','💡','🎯','🛸','👻'];this.nextElementSibling.innerText=e[Math.floor(Math.random()*e.length)]">Generieren</button><div class="font-bold text-primary text-2xl">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 64. Zufalls-Monat</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let m=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];this.nextElementSibling.innerText=m[Math.floor(Math.random()*12)]">Generieren</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 65. Browser Sprache</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=navigator.language">Check</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 66. User Agent</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=navigator.userAgent">Check</button><div class="font-bold text-primary" style="font-size:0.75rem; word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 67. Farbtiefe</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=screen.colorDepth+'-bit'">Check</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 68. CPU Kerne</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=(navigator.hardwareConcurrency||'?')+' Cores'">Check</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 69. Online Status</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="this.nextElementSibling.innerText=navigator.onLine?'🟢 Online':'🔴 Offline'">Check</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 70. Bildschirm-Ratio</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let w=screen.width,h=screen.height,gcd=(a,b)=>b?gcd(b,a%b):a;let d=gcd(w,h);this.nextElementSibling.innerText=(w/d)+':'+(h/d)">Check</button><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 71. Trinkgeld Calc</h3></div><input id="tipv1" type="number" class="input w-100 mb-2" placeholder="Rechnung (€)"><input type="number" class="input w-100 mb-2" placeholder="Trinkgeld (%)" oninput="let v=document.getElementById('tipv1').value;this.nextElementSibling.innerText=v?((v*this.value/100).toFixed(2)+' € Extra'):'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 72. Rabatt Calc</h3></div><input id="rabv1" type="number" class="input w-100 mb-2" placeholder="Preis (€)"><input type="number" class="input w-100 mb-2" placeholder="Rabatt (%)" oninput="let v=document.getElementById('rabv1').value;this.nextElementSibling.innerText=v?((v-(v*this.value/100)).toFixed(2)+' € Neu'):'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 73. +19% MwSt</h3></div><input type="number" class="input w-100 mb-2" placeholder="Netto..." oninput="this.nextElementSibling.innerText=this.value?(this.value*1.19).toFixed(2)+' €':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 74. -19% MwSt</h3></div><input type="number" class="input w-100 mb-2" placeholder="Brutto..." oninput="this.nextElementSibling.innerText=this.value?(this.value/1.19).toFixed(2)+' €':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 75. km/h > m/s</h3></div><input type="number" class="input w-100 mb-2" placeholder="km/h..." oninput="this.nextElementSibling.innerText=this.value?(this.value/3.6).toFixed(2)+' m/s':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 76. m/s > km/h</h3></div><input type="number" class="input w-100 mb-2" placeholder="m/s..." oninput="this.nextElementSibling.innerText=this.value?(this.value*3.6).toFixed(2)+' km/h':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 77. PS > kW</h3></div><input type="number" class="input w-100 mb-2" placeholder="PS..." oninput="this.nextElementSibling.innerText=this.value?(this.value*0.735499).toFixed(2)+' kW':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 78. kW > PS</h3></div><input type="number" class="input w-100 mb-2" placeholder="kW..." oninput="this.nextElementSibling.innerText=this.value?(this.value*1.35962).toFixed(2)+' PS':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 79. °F > °C</h3></div><input type="number" class="input w-100 mb-2" placeholder="°F..." oninput="this.nextElementSibling.innerText=this.value?((this.value-32)*5/9).toFixed(2)+' °C':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 80. °C > °F</h3></div><input type="number" class="input w-100 mb-2" placeholder="°C..." oninput="this.nextElementSibling.innerText=this.value?((this.value*9/5)+32).toFixed(2)+' °F':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 81. cm > Zoll</h3></div><input type="number" class="input w-100 mb-2" placeholder="cm..." oninput="this.nextElementSibling.innerText=this.value?(this.value/2.54).toFixed(2)+' in':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 82. Zoll > cm</h3></div><input type="number" class="input w-100 mb-2" placeholder="Zoll..." oninput="this.nextElementSibling.innerText=this.value?(this.value*2.54).toFixed(2)+' cm':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 83. kg > lbs</h3></div><input type="number" class="input w-100 mb-2" placeholder="kg..." oninput="this.nextElementSibling.innerText=this.value?(this.value*2.20462).toFixed(2)+' lbs':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 84. lbs > kg</h3></div><input type="number" class="input w-100 mb-2" placeholder="lbs..." oninput="this.nextElementSibling.innerText=this.value?(this.value/2.20462).toFixed(2)+' kg':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 85. Bin > Dec</h3></div><input type="number" class="input w-100 mb-2" placeholder="Binär..." oninput="this.nextElementSibling.innerText=parseInt(this.value,2)||'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 86. Dec > Bin</h3></div><input type="number" class="input w-100 mb-2" placeholder="Dezimal..." oninput="this.nextElementSibling.innerText=(parseInt(this.value)||0).toString(2)"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 87. Okt > Dec</h3></div><input type="number" class="input w-100 mb-2" placeholder="Oktal..." oninput="this.nextElementSibling.innerText=parseInt(this.value,8)||'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 88. Dec > Okt</h3></div><input type="number" class="input w-100 mb-2" placeholder="Dezimal..." oninput="this.nextElementSibling.innerText=(parseInt(this.value)||0).toString(8)"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 89. Hex > Dec</h3></div><input type="text" class="input w-100 mb-2" placeholder="Hex..." oninput="this.nextElementSibling.innerText=parseInt(this.value,16)||'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 90. Dec > Hex</h3></div><input type="number" class="input w-100 mb-2" placeholder="Dezimal..." oninput="this.nextElementSibling.innerText=(parseInt(this.value)||0).toString(16).toUpperCase()"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 91. ASCII > Text</h3></div><input type="text" class="input w-100 mb-2" placeholder="z.B. 65 66 67" oninput="this.nextElementSibling.innerText=this.value.split(' ').map(c=>String.fromCharCode(c)).join('')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 92. Text > ASCII</h3></div><input type="text" class="input w-100 mb-2" placeholder="Text..." oninput="this.nextElementSibling.innerText=this.value.split('').map(c=>c.charCodeAt(0)).join(' ')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 93. Umkehren</h3></div><input type="text" class="input w-100 mb-2" placeholder="Text..." oninput="this.nextElementSibling.innerText=this.value.split('').reverse().join('')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 94. Zeilen-Zähler</h3></div><textarea class="input w-100 mb-2" rows="2" oninput="this.nextElementSibling.innerText=this.value?this.value.split('\n').length:0"></textarea><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 95. Großschreibung</h3></div><input type="text" class="input w-100 mb-2" placeholder="worte hier..." oninput="this.nextElementSibling.innerText=this.value.replace(/\b\w/g,c=>c.toUpperCase())"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 96. snake_case</h3></div><input type="text" class="input w-100 mb-2" placeholder="Text hier..." oninput="this.nextElementSibling.innerText=this.value.toLowerCase().trim().replace(/\s+/g,'_')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 97. camelCase</h3></div><input type="text" class="input w-100 mb-2" placeholder="Text hier..." oninput="this.nextElementSibling.innerText=this.value.replace(/(?:^\w|[A-Z]|\b\w)/g,(w,i)=>i===0?w.toLowerCase():w.toUpperCase()).replace(/\s+/g,'')"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 98. PW Check</h3></div><input type="text" class="input w-100 mb-2" placeholder="Passwort..." oninput="let v=this.value,l=v.length,s=0;if(l>7)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;this.nextElementSibling.innerText=v?['Schwach','Mittel','Gut','Stark','Sehr Stark'][s]||'-':'-'"><div class="font-bold text-primary">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 99. Repeater</h3></div><input id="repv1" type="text" class="input w-100 mb-2" placeholder="Text"><input type="number" class="input w-100 mb-2" placeholder="Wiederholungen" oninput="let t=document.getElementById('repv1').value;this.nextElementSibling.innerText=(t&&this.value)?t.repeat(this.value).substring(0,200)+'...':'-'"><div class="font-bold text-primary" style="word-break:break-all">-</div></div>
+                <div class="card reveal text-center"><div class="tool-header"><h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 100. SSP</h3></div><button class="btn btn-secondary w-100 mb-2" onclick="let a=['✂️ Schere','🪨 Stein','📄 Papier'];this.nextElementSibling.innerText=a[Math.floor(Math.random()*3)]">Spielen</button><div class="font-bold text-primary text-2xl">-</div></div>
+
+                <div class="card reveal" id="tool-kanban" style="grid-column: 1 / -1;">
+                    <div class="tool-header">
+                        <h3>
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg> 
+                            101. Kanban Board
+                        </h3>
+                        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="addKanbanTask()">+ Neue Aufgabe</button>
+                    </div>
+                    <div class="kanban-wrapper" style="display: flex; gap: 20px; overflow-x: auto; min-height: 300px; padding-bottom: 10px;">
+                        <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')" style="flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px;">
+                            <h4 style="margin-bottom: 15px; color: var(--text-muted); display: flex; justify-content: space-between;">To Do <span id="count-todo">0</span></h4>
+                            <div id="kb-todo" class="kanban-dropzone" style="min-height: 200px;"></div>
+                        </div>
+                        <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'progress')" style="flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px;">
+                            <h4 style="margin-bottom: 15px; color: var(--secondary); display: flex; justify-content: space-between;">In Progress <span id="count-progress">0</span></h4>
+                            <div id="kb-progress" class="kanban-dropzone" style="min-height: 200px;"></div>
+                        </div>
+                        <div class="kanban-col" ondragover="allowDrop(event)" ondrop="drop(event, 'done')" style="flex: 1; min-width: 250px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px;">
+                            <h4 style="margin-bottom: 15px; color: var(--success); display: flex; justify-content: space-between;">Done <span id="count-done">0</span></h4>
+                            <div id="kb-done" class="kanban-dropzone" style="min-height: 200px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="rechner" class="section">
+        <div class="container">
+            <h2 class="reveal text-center" style="font-size: 2.5rem; margin-bottom: 40px;">Spezial-Rechner.</h2>
+            <div class="card reveal" style="max-width: 800px; margin: 0 auto; padding: 30px;">
+                <div class="tabs" id="calcTabs">
+                    <button class="tab-btn active" data-tab="tab-zins">Zinsrechner</button>
+                    <button class="tab-btn" data-tab="tab-unit">Einheiten</button>
+                    <button class="tab-btn" data-tab="tab-date">Datum</button>
+                </div>
+                
+                <div class="tab-content active" id="tab-zins">
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <div class="form-group"><label class="form-label">Startkapital (€)</label><input type="number" id="z-kap" class="input" value="10000" oninput="calcZins()"></div>
+                            <div class="form-group"><label class="form-label">Zinssatz p.a. (%)</label><input type="number" id="z-rate" class="input" value="5" step="0.1" oninput="calcZins()"></div>
+                            <div class="form-group"><label class="form-label">Laufzeit (Jahre)</label><input type="number" id="z-jahre" class="input" value="10" oninput="calcZins()"></div>
+                        </div>
+                        <div style="background: var(--bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; text-align: center;">
+                            <div style="color:var(--text-muted); font-size:0.9rem;">Endkapital nach <span id="z-y-out">10</span> Jahren</div>
+                            <div style="font-size: 2.5rem; font-weight:800; color:var(--primary); margin: 10px 0;" id="z-end">16.288,95 €</div>
+                            <div style="color:var(--success); font-size:0.9rem;">+ <span id="z-gewinn">6.288,95</span> € Zinsgewinn</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-unit">
+                    <div class="flex gap-4">
+                        <select id="u-type" class="input" style="flex:1; cursor:pointer;" onchange="updateUnitOpts()">
+                            <option value="len">Länge</option><option value="weight">Gewicht</option><option value="temp">Temperatur</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-4" style="margin-top:20px; align-items:center;">
+                        <input type="number" id="u-val1" class="input" value="1" oninput="calcUnit()">
+                        <select id="u-opt1" class="input" onchange="calcUnit()"></select>
+                        <span style="font-weight:800; font-size:1.5rem;">=</span>
+                        <input type="number" id="u-val2" class="input" readonly style="background:var(--bg);">
+                        <select id="u-opt2" class="input" onchange="calcUnit()"></select>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-date">
+                    <div class="flex gap-4" style="margin-bottom:20px;">
+                        <div style="flex:1;"><label class="form-label">Startdatum</label><input type="date" id="d-start" class="input" onchange="calcDate()"></div>
+                        <div style="flex:1;"><label class="form-label">Enddatum</label><input type="date" id="d-end" class="input" onchange="calcDate()"></div>
+                    </div>
+                    <div style="background: var(--bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight:800;" id="d-res">Bitte Daten wählen</div>
+                        <div style="color:var(--text-muted); font-size:0.9rem; margin-top:5px;" id="d-sub"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontakt" class="section" style="background: var(--surface);">
+        <div class="container">
+            <h2 class="reveal text-center" style="font-size: 2.5rem; margin-bottom: 20px;">Lass uns sprechen.</h2>
+            <p class="reveal text-center" style="color: var(--text-muted); margin-bottom: 40px;">Fragen, Feedback oder ein Projekt im Kopf? Schreib uns.</p>
+            
+            <div class="card reveal" style="max-width: 600px; margin: 0 auto; padding: 40px;">
+                <form id="contactForm" style="position: relative;">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" id="c-name" class="input" placeholder="Dein Name">
+                        <div class="error-msg">Bitte gib deinen Namen ein.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">E-Mail</label>
+                        <input type="email" id="c-email" class="input" placeholder="mail@example.com">
+                        <div class="error-msg">Bitte gib eine gültige E-Mail ein.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Betreff</label>
+                        <select id="c-subj" class="input" style="cursor:pointer;">
+                            <option>Allgemeine Anfrage</option><option>Support</option><option>Feedback</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nachricht</label>
+                        <textarea id="c-msg" class="input" rows="5" placeholder="Deine Nachricht..."></textarea>
+                        <div class="error-msg">Nachricht muss mind. 10 Zeichen lang sein.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Nachricht senden</button>
+
+                    <div class="success-overlay" id="c-success">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Gesendet!</h3>
+                        <p style="color: var(--text-muted);">Dein Mail-Client wurde geöffnet.</p>
+                        <button type="button" class="btn btn-outline" style="margin-top: 20px;" onclick="document.getElementById('c-success').classList.remove('show'); document.getElementById('contactForm').reset();">Neues Formular</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="#" class="logo" style="margin-bottom: 20px; display:inline-block;">Phil<span>.</span></a>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Alles was du brauchst. Auf einer Seite. Gebaut für Produktivität, ohne Kompromisse.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 15px;">Produkt</h4>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#rechner">Rechner</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 15px;">Tools</h4>
+                    <ul class="footer-links">
+                        <li><a href="#tool-notes">Notizen</a></li>
+                        <li><a href="#tool-weather">Wetter</a></li>
+                        <li><a href="#tool-pass">Passwort</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 15px;">Rechtliches</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="openModal('modal-impressum'); return false;">Impressum</a></li>
+                        <li><a href="#" onclick="openModal('modal-privacy'); return false;">Datenschutz</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                © 2025 Phil. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <div id="btt" onclick="window.scrollTo(0,0)"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg></div>
+
+    <div class="modal" id="modal-impressum">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('modal-impressum')">×</button>
+            <h2 style="margin-bottom: 20px;">Impressum</h2>
+            <p><strong>Angaben gemäß § 5 TMG</strong><br><br>Phil All-In-One Tech GmbH<br>Musterstraße 42<br>10115 Berlin<br><br><strong>Vertreten durch:</strong><br>Philipp Mustermann<br><br><strong>Kontakt:</strong><br>Telefon: +49 (0) 123 44 55 66<br>E-Mail: info@phil-aio.example.com<br><br><strong>Umsatzsteuer-ID:</strong><br>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br>DE999999999</p>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-privacy">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('modal-privacy')">×</button>
+            <h2 style="margin-bottom: 20px;">Datenschutz</h2>
+            <p><strong>1. Datenschutz auf einen Blick</strong><br>Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Diese Website speichert Daten (wie Notizen) fast ausschließlich lokal in Ihrem Browser (localStorage).<br><br><strong>2. APIs von Drittanbietern</strong><br>Für das Wetter-Tool nutzen wir die Open-Meteo API. Hierbei wird Ihre IP-Adresse an deren Server übermittelt, um die Daten abzurufen. Open-Meteo speichert nach eigenen Angaben keine persönlichen Daten.<br><br><strong>3. Kontaktformular</strong><br>Das Kontaktformular nutzt eine "mailto:" Verknüpfung. Es werden keine Daten auf unseren Servern gespeichert; die Daten werden direkt an Ihr lokales E-Mail-Programm übergeben.</p>
+        </div>
+    </div>
+
+    <div class="modal" id="demo-modal">
+        <div class="modal-content" style="background: var(--bg);">
+            <button class="modal-close" onclick="closeModal('demo-modal')">×</button>
+            <h2 style="margin-bottom: 10px;">Phil in Action</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Schnell. Lokal. Sicher.</p>
+            <div class="demo-screen">
+                <div class="demo-bar"></div>
+                Initializing 100 Tools...<br>Status: OVERKILL OK
+            </div>
+            <button class="btn btn-primary" onclick="closeModal('demo-modal'); window.location.href='#tools'">Selbst ausprobieren</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Core / Init ---
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => { loader.style.opacity = 0; setTimeout(() => loader.remove(), 500); }, 500);
+            initParticles();
+            initNotes();
+            calcBMI();
+            updateUnitOpts();
+            document.getElementById('d-start').valueAsDate = new Date();
+            let tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 7);
+            document.getElementById('d-end').valueAsDate = tmrw;
+            calcDate();
+            generatePass();
+            loadKanban();
+        });
+
+        // --- Nav / UI ---
+        const nav = document.getElementById('nav');
+        const btt = document.getElementById('btt');
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileBtn = document.getElementById('mobileBtn');
+        const navLinksContainer = document.getElementById('navLinks');
+
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            if(y > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+            if(y > 300) btt.classList.add('visible'); else btt.classList.remove('visible');
+
+            let current = '';
+            sections.forEach(sec => {
+                const top = sec.offsetTop - 100;
+                if(y >= top) current = sec.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href') === `#${current}`) link.classList.add('active');
+            });
+        });
+
+        mobileBtn.addEventListener('click', () => navLinksContainer.classList.toggle('show'));
+        navLinks.forEach(l => l.addEventListener('click', () => navLinksContainer.classList.remove('show')));
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // --- Typewriter ---
+        const twText = document.getElementById('typewriter');
+        const words = ["Produktivität", "Kreativität", "Organisation", "Alles"];
+        let wordIdx = 0, charIdx = 0, isDeleting = false;
+        function typeWriter() {
+            const current = words[wordIdx];
+            if (isDeleting) charIdx--; else charIdx++;
+            twText.textContent = current.substring(0, charIdx);
+            let speed = isDeleting ? 50 : 150;
+            if (!isDeleting && charIdx === current.length) { speed = 2000; isDeleting = true; }
+            else if (isDeleting && charIdx === 0) { isDeleting = false; wordIdx = (wordIdx + 1) % words.length; speed = 500; }
+            setTimeout(typeWriter, speed);
+        }
+        setTimeout(typeWriter, 1000);
+
+        // --- Canvas Particles ---
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            let w, h, particles = [];
+            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = document.getElementById('hero').offsetHeight; };
+            window.addEventListener('resize', resize); resize();
+
+            class Particle {
+                constructor() { this.x = Math.random()*w; this.y = Math.random()*h; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.r = Math.random()*2+1; }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if(this.x<0||this.x>w) this.vx *= -1; if(this.y<0||this.y>h) this.vy *= -1;
+                }
+                draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(124,58,237,0.5)'; ctx.fill(); }
+            }
+            for(let i=0; i<60; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                for(let i=0; i<particles.length; i++) {
+                    particles[i].update(); particles[i].draw();
+                    for(let j=i+1; j<particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 120) { ctx.beginPath(); ctx.strokeStyle = `rgba(124,58,237,${1 - dist/120})`; ctx.lineWidth = 0.5; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke(); }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // --- Tool 1: Notes ---
+        const nInput = document.getElementById('note-input');
+        const nPrev = document.getElementById('note-preview');
+        const nChars = document.getElementById('note-chars');
+        let nMode = 'edit';
+
+        function initNotes() {
+            const saved = localStorage.getItem('phil_notes');
+            if(saved) nInput.value = saved;
+            nChars.textContent = nInput.value.length + " Zeichen";
+        }
+        
+        nInput.addEventListener('input', () => {
+            localStorage.setItem('phil_notes', nInput.value);
+            nChars.textContent = nInput.value.length + " Zeichen";
+        });
+
+        document.getElementById('noteToggleBtn').addEventListener('click', (e) => {
+            if(nMode === 'edit') {
+                nMode = 'preview'; e.target.textContent = 'Bearbeiten'; e.target.classList.add('btn-primary'); e.target.classList.remove('btn-outline');
+                nInput.style.display = 'none'; nPrev.style.display = 'block';
+                let html = nInput.value
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+                    .replace(/\*(.*)\*/gim, '<i>$1</i>')
+                    .replace(/\n/gim, '<br>');
+                nPrev.innerHTML = html || '<span style="color:var(--text-muted)">Kein Inhalt.</span>';
+            } else {
+                nMode = 'edit'; e.target.textContent = 'Vorschau'; e.target.classList.remove('btn-primary'); e.target.classList.add('btn-outline');
+                nInput.style.display = 'block'; nPrev.style.display = 'none';
+            }
+        });
+
+        document.getElementById('note-clear').addEventListener('click', () => {
+            if(confirm('Notiz wirklich löschen?')) { nInput.value = ''; localStorage.removeItem('phil_notes'); nChars.textContent = "0 Zeichen"; if(nMode==='preview') nPrev.innerHTML=''; }
+        });
+
+        document.getElementById('noteDlBtn').addEventListener('click', () => {
+            const blob = new Blob([nInput.value], {type: "text/plain;charset=utf-8"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `Phil_Notiz_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click(); URL.revokeObjectURL(url);
+        });
+
+        // --- Tool 2: Calc ---
+        const cVal = document.getElementById('calc-val');
+        const cHist = document.getElementById('calc-hist');
+        let cExpr = "";
+        
+        function calcInput(char) {
+            if(cExpr === "Error") cExpr = "";
+            cExpr += char; cVal.textContent = cExpr;
+        }
+        function calcClear() { cExpr = ""; cVal.textContent = "0"; }
+        function calcEval() {
+            if(!cExpr) return;
+            try {
+                let toEval = cExpr.replace(/sin\(/g, 'Math.sin(').replace(/cos\(/g, 'Math.cos(').replace(/sqrt\(/g, 'Math.sqrt(').replace(/\^/g, '**');
+                let res = new Function('return ' + toEval)();
+                if(!isFinite(res) || isNaN(res)) throw "Error";
+                res = Math.round(res * 100000000)/100000000;
+                cHist.textContent = cExpr + " =";
+                cExpr = res.toString(); cVal.textContent = cExpr;
+            } catch(e) { cExpr = "Error"; cVal.textContent = "Error"; }
+        }
+        document.addEventListener('keydown', (e) => {
+            if(document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+            const key = e.key;
+            if(/[0-9\.\+\-\*\/\(\)]/.test(key)) { calcInput(key); e.preventDefault(); }
+            else if(key === 'Enter' || key === '=') { calcEval(); e.preventDefault(); }
+            else if(key === 'Escape' || key === 'Backspace') { calcClear(); e.preventDefault(); }
+        });
+
+        // --- Tool 3: Weather ---
+        async function fetchWeather(lat, lon, name) {
+            document.getElementById('w-content').style.display = 'none';
+            document.getElementById('w-loading').style.display = 'block';
+            document.getElementById('w-loading').textContent = 'Lade Daten...';
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`);
+                if(!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                
+                document.getElementById('w-city-name').textContent = name;
+                document.getElementById('w-temp').textContent = Math.round(data.current.temperature_2m) + "°";
+                document.getElementById('w-wind').textContent = Math.round(data.current.wind_speed_10m) + " km/h";
+                document.getElementById('w-hum').textContent = data.current.relative_humidity_2m + "%";
+                
+                const wco = getWeatherObj(data.current.weather_code);
+                document.getElementById('w-desc').textContent = wco.desc;
+                document.getElementById('w-icon').innerHTML = wco.svg;
+
+                let fHtml = '';
+                for(let i=1; i<7; i++) {
+                    const dCode = data.daily.weather_code[i];
+                    const dMax = Math.round(data.daily.temperature_2m_max[i]);
+                    const dMin = Math.round(data.daily.temperature_2m_min[i]);
+                    const date = new Date(data.daily.time[i]).toLocaleDateString('de-DE', {weekday:'short'});
+                    fHtml += `<div class="forecast-card"><div style="font-size:0.8rem;color:var(--text-muted);">${date}</div><div style="margin:5px 0;">${getWeatherObj(dCode).svg.replace('width="48"','width="24"').replace('height="48"','height="24"')}</div><div style="font-size:0.9rem;font-weight:800;">${dMax}°</div><div style="font-size:0.75rem;color:var(--text-muted);">${dMin}°</div></div>`;
+                }
+                document.getElementById('w-forecast').innerHTML = fHtml;
+                
+                document.getElementById('w-loading').style.display = 'none';
+                document.getElementById('w-content').style.display = 'block';
+            } catch(e) {
+                document.getElementById('w-loading').textContent = 'Fehler beim Laden. Bitte nochmal versuchen.';
+            }
+        }
+
+        async function searchWeather() {
+            const city = document.getElementById('w-city-input').value.trim();
+            if(!city) return;
+            document.getElementById('w-content').style.display = 'none';
+            document.getElementById('w-loading').style.display = 'block';
+            document.getElementById('w-loading').textContent = 'Suche Ort...';
+            try {
+                const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=de`);
+                const data = await res.json();
+                if(!data.results || data.results.length === 0) throw new Error("Ort nicht gefunden");
+                fetchWeather(data.results[0].latitude, data.results[0].longitude, data.results[0].name + ", " + data.results[0].country_code);
+            } catch(e) {
+                document.getElementById('w-loading').textContent = 'Ort nicht gefunden.';
+            }
+        }
+
+        function getGeoWeather() {
+            if(navigator.geolocation) {
+                document.getElementById('w-loading').style.display = 'block'; document.getElementById('w-content').style.display = 'none'; document.getElementById('w-loading').textContent = 'Standort wird ermittelt...';
+                navigator.geolocation.getCurrentPosition((pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude, "Mein Standort"), () => { document.getElementById('w-loading').textContent = 'Standortfreigabe verweigert.'; });
+            }
+        }
+
+        function getWeatherObj(code) {
+            let desc = "Klar", svg = `<svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`;
+            if(code >= 1 && code <= 3) { desc = "Bewölkt"; svg = `<svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.5 19C19.985 19 22 16.985 22 14.5C22 12.015 19.985 10 17.5 10C17.133 10 16.776 10.043 16.435 10.125C15.65 6.643 12.56 4 8.85 4C4.514 4 1 7.514 1 11.85C1 12.528 1.086 13.187 1.246 13.818C1.085 14.037 1 14.26 1 14.5C1 16.985 3.015 19 5.5 19H17.5Z"/></svg>`; }
+            if(code >= 51 && code <= 67) { desc = "Regen"; svg = `<svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25M16 20l-2-2m-4 2l-2-2m-4 2l-2-2"/></svg>`; }
+            if(code >= 71 && code <= 82) { desc = "Schnee"; svg = `<svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/><path d="M8 15v6m4-4v4m4-6v6"/></svg>`; }
+            if(code >= 95) { desc = "Gewitter"; svg = `<svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></svg>`; }
+            return {desc, svg};
+        }
+        fetchWeather(52.52, 13.41, "Berlin");
+
+        // --- Tool 4: Pomodoro ---
+        let pomoTimer = null, pomoTime = 25*60, isPomoWork = true, isPomoRun = false;
+        const ring = document.getElementById('pomo-ring'), tStr = document.getElementById('pomo-time-str'), tMode = document.getElementById('pomo-mode'), btnStart = document.getElementById('pomo-start');
+        
+        function updatePomoDisp() {
+            let m = Math.floor(pomoTime/60), s = pomoTime%60;
+            tStr.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            let max = isPomoWork ? document.getElementById('pomo-w-in').value*60 : document.getElementById('pomo-p-in').value*60;
+            ring.style.strokeDashoffset = 565.48 - (pomoTime/max)*565.48;
+        }
+        function beep() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator(); osc.connect(ctx.destination);
+            osc.frequency.value = 880; osc.start(); setTimeout(() => osc.stop(), 300);
+        }
+        function togglePomo() {
+            if(isPomoRun) { clearInterval(pomoTimer); isPomoRun=false; btnStart.textContent="Start"; }
+            else {
+                if(pomoTime<=0) resetPomo();
+                isPomoRun=true; btnStart.textContent="Pause";
+                pomoTimer = setInterval(() => {
+                    pomoTime--; updatePomoDisp();
+                    if(pomoTime <= 0) {
+                        beep(); clearInterval(pomoTimer); isPomoRun=false; btnStart.textContent="Start";
+                        isPomoWork = !isPomoWork;
+                        tMode.textContent = isPomoWork ? "Fokus" : "Pause";
+                        ring.style.stroke = isPomoWork ? "var(--primary)" : "var(--secondary)";
+                        pomoTime = isPomoWork ? document.getElementById('pomo-w-in').value*60 : document.getElementById('pomo-p-in').value*60;
+                        updatePomoDisp();
+                    }
+                }, 1000);
+            }
+        }
+        function resetPomo() {
+            clearInterval(pomoTimer); isPomoRun=false; btnStart.textContent="Start"; isPomoWork=true; tMode.textContent="Fokus";
+            ring.style.stroke = "var(--primary)"; pomoTime = document.getElementById('pomo-w-in').value*60; updatePomoDisp();
+        }
+        btnStart.addEventListener('click', togglePomo);
+        document.getElementById('pomo-reset').addEventListener('click', resetPomo);
+        document.getElementById('pomo-w-in').addEventListener('change', resetPomo);
+        document.getElementById('pomo-p-in').addEventListener('change', resetPomo);
+        updatePomoDisp();
+
+        // --- Tool 5: Password Gen ---
+        const charsU="ABCDEFGHIJKLMNOPQRSTUVWXYZ", charsL="abcdefghijklmnopqrstuvwxyz", charsN="0123456789", charsS="!@#$%^&*()_+~`|}{[]:;?><,./-=";
+        function generatePass() {
+            const len = document.getElementById('pass-len').value; document.getElementById('pass-len-val').textContent = len;
+            const useU=document.getElementById('pass-u').checked, useL=document.getElementById('pass-l').checked, useN=document.getElementById('pass-n').checked, useS=document.getElementById('pass-s').checked;
+            let pool = "", pass = "", types = 0;
+            if(useU) { pool+=charsU; types++; } if(useL) { pool+=charsL; types++; } if(useN) { pool+=charsN; types++; } if(useS) { pool+=charsS; types++; }
+            if(pool.length === 0) { document.getElementById('pass-out').textContent = "Bitte Option wählen!"; return; }
+            const arr = new Uint32Array(len); window.crypto.getRandomValues(arr);
+            for(let i=0; i<len; i++) pass += pool[arr[i] % pool.length];
+            document.getElementById('pass-out').textContent = pass;
+            
+            let str = (len * types) / 1.5;
+            let bar = document.getElementById('pass-str-fill'), txt = document.getElementById('pass-str-text');
+            if(str < 30) { bar.style.width="25%"; bar.style.background="var(--error)"; txt.textContent="Schwach"; txt.style.color="var(--error)"; }
+            else if(str < 60) { bar.style.width="50%"; bar.style.background="#f59e0b"; txt.textContent="Mittel"; txt.style.color="#f59e0b"; }
+            else if(str < 90) { bar.style.width="75%"; bar.style.background="var(--secondary)"; txt.textContent="Stark"; txt.style.color="var(--secondary)"; }
+            else { bar.style.width="100%"; bar.style.background="var(--success)"; txt.textContent="Sehr Stark"; txt.style.color="var(--success)"; }
+        }
+        function copyPass() {
+            const p = document.getElementById('pass-out').textContent;
+            if(p==="Bitte Option wählen!" || p==="Click Generate") return;
+            navigator.clipboard.writeText(p).then(() => {
+                const btn = document.getElementById('pass-copy-btn');
+                btn.textContent = "Kopiert!"; btn.classList.replace('btn-primary','btn-secondary');
+                setTimeout(() => { btn.textContent = "Kopieren"; btn.classList.replace('btn-secondary','btn-primary'); }, 2000);
+            });
+        }
+        document.getElementById('pass-len').addEventListener('input', generatePass);
+        ['pass-u','pass-l','pass-n','pass-s'].forEach(id => document.getElementById(id).addEventListener('change', generatePass));
+
+        // --- Tool 6: BMI ---
+        function calcBMI() {
+            let h = parseFloat(document.getElementById('bmi-h').value)/100;
+            let w = parseFloat(document.getElementById('bmi-w').value);
+            if(!h || !w || h<=0 || w<=0) return;
+            let bmi = w / (h*h);
+            document.getElementById('bmi-res').textContent = bmi.toFixed(1);
+            
+            let pos = ((bmi - 15) / (40 - 15)) * 100; pos = Math.max(0, Math.min(100, pos));
+            document.getElementById('bmi-marker').style.left = pos + "%";
+            
+            let desc = document.getElementById('bmi-desc');
+            if(bmi < 18.5) { desc.textContent = "Untergewicht. Achte auf ausreichende Ernährung."; desc.style.color = "var(--secondary)"; }
+            else if(bmi < 25) { desc.textContent = "Normalgewicht. Optimaler Bereich, weiter so!"; desc.style.color = "var(--success)"; }
+            else if(bmi < 30) { desc.textContent = "Übergewicht. Etwas Bewegung und ausgewogene Ernährung helfen."; desc.style.color = "#f59e0b"; }
+            else { desc.textContent = "Adipositas. Wir empfehlen Rücksprache mit einem Arzt."; desc.style.color = "var(--error)"; }
+        }
+
+        // --- Tool 101: Kanban Board ---
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        function drop(ev, colId) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var el = document.getElementById(data);
+            if(el) {
+                var target = ev.target.closest('.kanban-col').querySelector('.kanban-dropzone');
+                target.appendChild(el);
+                updateKanbanCounts();
+                saveKanban();
+            }
+        }
+        function addKanbanTask() {
+            let text = prompt("Neue Aufgabe:");
+            if(text && text.trim() !== "") {
+                let id = 'task-' + Date.now();
+                let taskHtml = `<div class="kanban-task" id="${id}" draggable="true" ondragstart="drag(event)">
+                    ${text}
+                    <button onclick="this.parentElement.remove(); updateKanbanCounts(); saveKanban();" style="float:right; background:none; border:none; color:var(--error); cursor:pointer; font-size:1.2rem; line-height:1;">×</button>
+                </div>`;
+                document.getElementById('kb-todo').insertAdjacentHTML('beforeend', taskHtml);
+                updateKanbanCounts();
+                saveKanban();
+            }
+        }
+        function updateKanbanCounts() {
+            document.getElementById('count-todo').innerText = document.getElementById('kb-todo').children.length;
+            document.getElementById('count-progress').innerText = document.getElementById('kb-progress').children.length;
+            document.getElementById('count-done').innerText = document.getElementById('kb-done').children.length;
+        }
+        function saveKanban() {
+            let data = {
+                todo: document.getElementById('kb-todo').innerHTML,
+                progress: document.getElementById('kb-progress').innerHTML,
+                done: document.getElementById('kb-done').innerHTML
+            };
+            localStorage.setItem('phil_kanban', JSON.stringify(data));
+        }
+        function loadKanban() {
+            let saved = localStorage.getItem('phil_kanban');
+            if(saved) {
+                let data = JSON.parse(saved);
+                document.getElementById('kb-todo').innerHTML = data.todo || "";
+                document.getElementById('kb-progress').innerHTML = data.progress || "";
+                document.getElementById('kb-done').innerHTML = data.done || "";
+                updateKanbanCounts();
+            }
+        }
+
+        // --- Rechner Tabs & Logic ---
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active'); document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        function calcZins() {
+            let k = parseFloat(document.getElementById('z-kap').value)||0, r = parseFloat(document.getElementById('z-rate').value)||0, y = parseFloat(document.getElementById('z-jahre').value)||0;
+            let end = k * Math.pow(1 + r/100, y);
+            document.getElementById('z-end').textContent = end.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+            document.getElementById('z-gewinn').textContent = (end-k).toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2});
+            document.getElementById('z-y-out').textContent = y;
+        }
+        calcZins();
+
+        const units = {
+            len: { m: 1, km: 1000, cm: 0.01, mm: 0.001, inch: 0.0254, ft: 0.3048, mi: 1609.34 },
+            weight: { kg: 1, g: 0.001, mg: 0.000001, t: 1000, lb: 0.453592, oz: 0.0283495 },
+            temp: 'temp'
+        };
+        const uLabels = { len: {m:'Meter',km:'Kilometer',cm:'Zentimeter',mm:'Millimeter',inch:'Zoll',ft:'Fuß',mi:'Meilen'}, weight: {kg:'Kilogramm',g:'Gramm',mg:'Milligramm',t:'Tonnen',lb:'Pfund',oz:'Unzen'} };
+        
+        function updateUnitOpts() {
+            let type = document.getElementById('u-type').value;
+            let o1 = document.getElementById('u-opt1'), o2 = document.getElementById('u-opt2');
+            o1.innerHTML=''; o2.innerHTML='';
+            if(type === 'temp') {
+                ['Celsius', 'Fahrenheit', 'Kelvin'].forEach(t => { o1.innerHTML+=`<option value="${t}">${t}</option>`; o2.innerHTML+=`<option value="${t}">${t}</option>`; });
+                o2.selectedIndex = 1;
+            } else {
+                for(let k in units[type]) { o1.innerHTML+=`<option value="${k}">${uLabels[type][k]}</option>`; o2.innerHTML+=`<option value="${k}">${uLabels[type][k]}</option>`; }
+                if(o2.options.length>1) o2.selectedIndex=1;
+            }
+            calcUnit();
+        }
+        function calcUnit() {
+            let type = document.getElementById('u-type').value, v1 = parseFloat(document.getElementById('u-val1').value)||0, t1 = document.getElementById('u-opt1').value, t2 = document.getElementById('u-opt2').value, res = 0;
+            if(type === 'temp') {
+                let c = 0;
+                if(t1==='Celsius') c=v1; else if(t1==='Fahrenheit') c=(v1-32)*5/9; else if(t1==='Kelvin') c=v1-273.15;
+                if(t2==='Celsius') res=c; else if(t2==='Fahrenheit') res=(c*9/5)+32; else if(t2==='Kelvin') res=c+273.15;
+            } else { res = v1 * (units[type][t1] / units[type][t2]); }
+            document.getElementById('u-val2').value = parseFloat(res.toFixed(6));
+        }
+
+        function calcDate() {
+            let d1 = new Date(document.getElementById('d-start').value), d2 = new Date(document.getElementById('d-end').value);
+            if(isNaN(d1) || isNaN(d2)) { document.getElementById('d-res').textContent = "Ungültige Daten"; return; }
+            let diffT = d2 - d1;
+            if(diffT < 0) { let tmp = d1; d1 = d2; d2 = tmp; diffT = d2 - d1; }
+            let diffD = Math.ceil(diffT / (1000 * 60 * 60 * 24));
+            document.getElementById('d-res').textContent = diffD + " Tage";
+            document.getElementById('d-sub').textContent = `~ ${(diffD/7).toFixed(1)} Wochen | ${(diffD/30.44).toFixed(1)} Monate | ${(diffD/365.25).toFixed(2)} Jahre`;
+        }
+
+        // --- Contact Form ---
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const n = document.getElementById('c-name'), em = document.getElementById('c-email'), msg = document.getElementById('c-msg'), subj = document.getElementById('c-subj').value;
+            let valid = true;
+
+            [n, em, msg].forEach(el => { el.classList.remove('error'); el.nextElementSibling.style.display = 'none'; });
+            if(!n.value.trim()) { n.classList.add('error'); n.nextElementSibling.style.display='block'; valid=false; }
+            if(!/^\S+@\S+\.\S+$/.test(em.value)) { em.classList.add('error'); em.nextElementSibling.style.display='block'; valid=false; }
+            if(msg.value.trim().length < 10) { msg.classList.add('error'); msg.nextElementSibling.style.display='block'; valid=false; }
+
+            if(valid) {
+                document.getElementById('c-success').classList.add('show');
+                const mailto = `mailto:hello@phil-aio.example.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent("Name: " + n.value + "\nEmail: " + em.value + "\n\nNachricht:\n" + msg.value)}`;
+                setTimeout(() => window.location.href = mailto, 1000);
+            }
+        });
+
+    </script>
+</body>
+</html>
